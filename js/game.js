@@ -22,9 +22,7 @@ function gameCreate() {
   street.width = game.width * 3.3;
   street.height = game.height;
 
-  // walls = game.add.image(0, 0, 'walls');
-  // walls.width = game.width;
-  // walls.height = game.height;
+  DrawWalls();
 
   leftWall = game.add.image(-200, -510, 'leftWall');
   leftWall.width = game.width * 0.7;
@@ -34,10 +32,36 @@ function gameCreate() {
   rightWall.width = game.width * 0.7;
   rightWall.height = game.height * 2;
 
-  awning = game.add.image(game.width * 0.6, game.height * 0.4, 'awning');
-  awning.width = 150;
-  awning.height = 140;
+  awning = game.add.image(game.width * 0.565, game.height * 0.37, 'awning');
+  awning.width = 200;
+  awning.height = 160;
 
+  DrawShadows();
+
+  maxxdaddy.visible = false;
+
+  scoreText = game.add.text(
+    game.world.centerX,
+    game.height * 0.95,
+    'SCORE: 0',
+    {
+      fontSize: '18px',
+      fill: '#eee',
+    },
+  );
+}
+function DrawWalls() {
+  bmd = game.make.bitmapData(game.width, game.height);
+  bmd.addToWorld();
+  var ctx = bmd.context;
+  ctx.moveTo(0, 0);
+  ctx.lineTo(game.world.centerX, game.world.centerY);
+  ctx.lineTo(0, game.world.centerY);
+  ctx.fill();
+  ctx.closePath();
+}
+
+function DrawShadows() {
   //  Our BitmapData (same size as our canvas)
   bmd = game.make.bitmapData(game.width, game.height);
 
@@ -115,20 +139,7 @@ function gameCreate() {
   );
   ctx.fill();
   ctx.closePath();
-
-  maxxdaddy.visible = false;
-
-  scoreText = game.add.text(
-    game.world.centerX,
-    game.height * 0.95,
-    'SCORE: 0',
-    {
-      fontSize: '18px',
-      fill: '#eee',
-    },
-  );
 }
-
 // the game loop. Game logic lives in here.
 // is called every frame
 function update() {

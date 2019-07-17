@@ -6,3 +6,5 @@ let startGame = false;
 let maxxdaddy;
 let curScore = 0;
 let bmd;
+let walking = false;
+let streetShrink = 1;

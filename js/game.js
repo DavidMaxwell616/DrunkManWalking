@@ -14,52 +14,66 @@ function gameCreate() {
   game.stage.backgroundColor = '#001133';
 
   // reset the score
-  background = game.add.image(0, 0, 'background');
-  background.width = game.width;
-  background.height = game.height;
+  // background = game.add.image(0, 0, 'background');
+  // background.width = game.width;
+  // background.height = game.height;
 
-  street = game.add.image(-770, game.height * 0.6, 'street');
-  street.width = game.width * 3.3;
-  street.height = game.height;
+  street = game.add.image(game.world.centerX, game.world.centerY, 'street');
+  street.anchor.x = .4;
+  street.anchor.y = 0;
 
-  DrawWalls();
+  // walls = game.add.image(0, 0, 'walls');
+  // walls.width = game.width;
+  // walls.height = game.height;
 
-  leftWall = game.add.image(-200, -510, 'leftWall');
-  leftWall.width = game.width * 0.7;
-  leftWall.height = game.height * 2;
+  // leftWall = game.add.image(-200, -510, 'leftWall');
+  // leftWall.width = game.width * 0.7;
+  // leftWall.height = game.height * 2;
 
-  rightWall = game.add.image(game.width / 2, -547, 'rightWall');
-  rightWall.width = game.width * 0.7;
-  rightWall.height = game.height * 2;
+  // rightWall = game.add.image(game.width / 2, -547, 'rightWall');
+  // rightWall.width = game.width * 0.7;
+  // rightWall.height = game.height * 2;
 
-  awning = game.add.image(game.width * 0.565, game.height * 0.37, 'awning');
-  awning.width = 200;
-  awning.height = 160;
+  // awning = game.add.image(game.width * 0.565, game.height * 0.37, 'awning');
+  // awning.width = 200;
+  // awning.height = 160;
 
-  DrawShadows();
+  // DrawShadows();
 
   maxxdaddy.visible = false;
+
+  bodyandlegs = game.add.image(game.world.centerX, game.world.centerY, 'body&legs');
+  bodyandlegs.anchor.x = 0.5;
+  bodyandlegs.anchor.y = 0;
+
+  //arms = game.add.image(game.world.centerX, 300, 'arms');
+  head = game.add.image(game.world.centerX + 10, game.world.centerY - 30, 'head');
+  head.anchor.set(0.5);
+
+  rightArm3 = game.add.image(game.world.centerX - 35, game.world.centerY + 25, 'rightArm3');
+  rightArm3.anchor.set(0.5);
+
+  leftArm = game.add.image(game.world.centerX + 43, game.world.centerY + 35, 'leftArm');
+  leftArm.anchor.set(0.5);
+
+  bottle = game.add.image(game.world.centerX + 70, game.world.centerY + 55, 'bottle');
+  bottle.anchor.set(0.5);
+
+  start = game.add.image(game.world.centerX - 70, game.world.centerY, 'start');
+  start.anchor.set(0.5);
+  start.inputEnabled = true;
+  start.events.onInputDown.add(startWalking => walking = true, this);
 
   scoreText = game.add.text(
     game.world.centerX,
     game.height * 0.95,
-    'SCORE: 0',
-    {
+    'SCORE: 0', {
       fontSize: '18px',
       fill: '#eee',
     },
   );
 }
-function DrawWalls() {
-  bmd = game.make.bitmapData(game.width, game.height);
-  bmd.addToWorld();
-  var ctx = bmd.context;
-  ctx.moveTo(0, 0);
-  ctx.lineTo(game.world.centerX, game.world.centerY);
-  ctx.lineTo(0, game.world.centerY);
-  ctx.fill();
-  ctx.closePath();
-}
+
 
 function DrawShadows() {
   //  Our BitmapData (same size as our canvas)
@@ -147,6 +161,16 @@ function update() {
     mainMenuUpdate();
     return;
   }
+  if (!walking)
+    return;
+  street.x = game.world.centerX;
+  street.y -= .01;
+  streetShrink -= .01
+  //console.log(streetShrink);
+  if (streetShrink < 0.5) {
+    streetShrink = 1;
+  }
+  street.scale.setTo(streetShrink, streetShrink);
 }
 
 function clearLevel() {}

@@ -1,0 +1,227 @@
+{
+  "anims": [{
+      "key": "streetMove",
+      "frames": [{
+          "key": "street1",
+          "frame": null
+        },
+        {
+          "key": "street2",
+          "frame": null
+        },
+        {
+          "key": "street3",
+          "frame": null
+        },
+        {
+          "key": "street4",
+          "frame": null
+        },
+        {
+          "key": "street5",
+          "frame": null
+        },
+        {
+          "key": "street6",
+          "frame": null
+        },
+        {
+          "key": "street7",
+          "frame": null
+        },
+        {
+          "key": "street8",
+          "frame": null
+        },
+        {
+          "key": "street9",
+          "frame": null
+        },
+        {
+          "key": "street10",
+          "frame": null
+        },
+        {
+          "key": "street11",
+          "frame": null
+        },
+        {
+          "key": "street12",
+          "frame": null
+        },
+        {
+          "key": "street13",
+          "frame": null
+        },
+        {
+          "key": "street14",
+          "frame": null
+        },
+        {
+          "key": "street15",
+          "frame": null
+        },
+        {
+          "key": "street16",
+          "frame": null
+        },
+        {
+          "key": "street17",
+          "frame": null
+        },
+        {
+          "key": "street18",
+          "frame": null
+        },
+        {
+          "key": "street19",
+          "frame": null
+        },
+        {
+          "key": "street20",
+          "frame": null
+        },
+        {
+          "key": "street21",
+          "frame": null
+        },
+        {
+          "key": "street22",
+          "frame": null
+        },
+        {
+          "key": "street23",
+          "frame": null
+        },
+        {
+          "key": "street24",
+          "frame": null
+        },
+        {
+          "key": "street25",
+          "frame": null
+        },
+        {
+          "key": "street26",
+          "frame": null
+        },
+        {
+          "key": "street27",
+          "frame": null
+        },
+        {
+          "key": "street28",
+          "frame": null
+        },
+        {
+          "key": "street29",
+          "frame": null
+        },
+        {
+          "key": "street30",
+          "frame": null
+        },
+        {
+          "key": "street31",
+          "frame": null
+        },
+        {
+          "key": "street32",
+          "frame": null
+        },
+        {
+          "key": "street33",
+          "frame": null
+        },
+        {
+          "key": "street34",
+          "frame": null
+        },
+        {
+          "key": "street35",
+          "frame": null
+        },
+        {
+          "key": "street36",
+          "frame": null
+        },
+        {
+          "key": "street37",
+          "frame": null
+        },
+        {
+          "key": "street38",
+          "frame": null
+        },
+        {
+          "key": "street39",
+          "frame": null
+        },
+        {
+          "key": "street40",
+          "frame": null
+        },
+        {
+          "key": "street41",
+          "frame": null
+        },
+        {
+          "key": "street42",
+          "frame": null
+        },
+        {
+          "key": "street43",
+          "frame": null
+        },
+        {
+          "key": "street44",
+          "frame": null
+        },
+        {
+          "key": "street45",
+          "frame": null
+        },
+        {
+          "key": "street46",
+          "frame": null
+        },
+        {
+          "key": "street47",
+          "frame": null
+        },
+        {
+          "key": "street48",
+          "frame": null
+        },
+        {
+          "key": "street49",
+          "frame": null
+        },
+        {
+          "key": "street50",
+          "duration": 50
+        }
+      ],
+      "frameRate": 8,
+      "repeat": -1
+    },
+    {
+      "key": "leftWallMove",
+      "frames": [{
+        "key": "leftWall1",
+        "frame": null
+      }],
+      "frameRate": 8,
+      "repeat": -1
+    },
+    {
+      "key": "rightWallMove",
+      "frames": [{
+        "key": "rightWall1",
+        "frame": null
+      }],
+      "frameRate": 8,
+      "repeat": -1
+    }
+  ]
+}

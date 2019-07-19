@@ -1,57 +1,110 @@
-const game = new Phaser.Game(1000, 500, Phaser.AUTO, 'game', {
-  preload,
-  create,
-  update,
-});
+var config = {
+  type: Phaser.AUTO,
+  parent: 'game',
+  width: 1000,
+  height: 500,
+  backgroundColor: '#001133',
+  scene: {
+    preload: preload,
+    create: create,
+    update: update,
+  },
+};
 
-let street;
+var game = new Phaser.Game(config);
+
+let street1;
 let button;
-let leftWall;
-let rightWall;
+let leftWall1;
+let rightWall1;
 let walls;
-let streetTween;
-let lWallTween;
-let rWallTween;
 
 function preload() {
-  game.load.image('street', '../assets/images/road.png');
-  game.load.image('walls', '../assets/images/walls.png');
-  game.load.image('leftWall', '../assets/images/left wall.png');
-  game.load.image('rightWall', '../assets/images/right wall.png');
-  game.load.image('button', '../assets/images/button.png');
+  var progressBar = this.add.graphics();
+  var progressBox = this.add.graphics();
+  progressBox.fillStyle(0x222222, 0.8);
+  progressBox.fillRect(340, 270, 320, 50);
+  this.load.on('progress', function (value) {
+    console.log(value);
+  });
+
+  this.load.on('fileprogress', function (file) {
+    console.log(file.src);
+  });
+
+  this.load.on('complete', function () {
+    console.log('complete');
+    progressBar.destroy();
+    progressBox.destroy();
+    loadingText.destroy();
+    percentText.destroy();
+  });
+  this.load.on('progress', function (value) {
+    console.log(value);
+    progressBar.clear();
+    progressBar.fillStyle(0xffffff, 1);
+    progressBar.fillRect(350, 280, 300 * value, 30);
+    percentText.setText(parseInt(value * 100) + '%');
+  });
+
+  var width = this.cameras.main.width;
+  var height = this.cameras.main.height;
+  var loadingText = this.make.text({
+    x: width / 2,
+    y: height / 2 - 50,
+    text: 'Loading...',
+    style: {
+      font: '20px monospace',
+      fill: '#ffffff'
+    }
+  });
+  loadingText.setOrigin(0.5, 0.5);
+
+  var percentText = this.make.text({
+    x: width / 2,
+    y: height / 2 - 5,
+    text: '0%',
+    style: {
+      font: '18px monospace',
+      fill: '#ffffff'
+    }
+  });
+  percentText.setOrigin(0.5, 0.5);
+  this.load.image('walls', '../assets/images/walls.svg');
+  this.load.animation('streetMove', '../assets/json/animations.json');
+  this.load.animation('leftWallMove', '../assets/json/animations.json');
+  this.load.animation('rightWallMove', '../assets/json/animations.json');
+  //console.log(this.anims);
+  this.load.path = '../assets/images/leftWall/';
+  for (let index = 1; index < 201; index++) {
+    this.load.image('leftWall' + index, index + '.svg');
+  }
+  this.load.path = '../assets/images/rightWall/';
+  for (let index = 1; index < 201; index++) {
+    this.load.image('rightWall' + index, index + '.svg');
+  }
+  this.load.path = '../assets/images/street/';
+  for (let index = 1; index < 51; index++) {
+    this.load.image('street' + index, index + '.svg');
+  }
 }
 
 function create() {
-  game.stage.backgroundColor = '#001133';
-  street = game.add.image(game.world.centerX + 70, game.world.centerY, 'street');
-  street.anchor.x = .4;
-  street.anchor.y = 0;
-  street.scale.x = 1.3;
-  street.scale.y = 1.3;
+  street = this.add.sprite(800, 500, 'street1').play('streetMove');
 
-  walls = game.add.image(0, 0, 'walls');
-  walls.width = game.width;
-  walls.height = game.height;
+  // const walls = this.add.image(420, 250, 'walls');
+  // walls.setScale(2);
 
-  leftWall = game.add.image(-200, -510, 'leftWall');
-  leftWall.width = game.width * 0.7;
-  leftWall.height = game.height * 2;
+  leftWall = this.add.sprite(800, 500, 'leftWall1').play('leftWallMove');
 
-  rightWall = game.add.image(game.width / 2, -547, 'rightWall');
-  rightWall.width = game.width * 0.7;
-  rightWall.height = game.height * 2;
-  DrawShadows();
-  button = game.add.button(50, 50, 'button', actionOnClick, this, 2, 1, 0);
-  streetTween = game.add.tween(street.scale).to({
-    x: -.2,
-    y: .1
-  }, 0, Phaser.Easing.Linear.None, true, true, 2500, 10);
-  //tween.onComplete.add(onComplete, this);
+  rightWall = this.add.sprite(1400, -270, 'rightWall1').play('rightWallMove');
+
+  //DrawShadows();
 }
 
 function DrawShadows() {
   //  Our BitmapData (same size as our canvas)
-  bmd = game.make.bitmapData(game.width, game.height);
+  bmd = this.make.bitmapData(this.width, this.height);
 
   let shadowOffsetLeft = 240;
   let shadowOffsetRight = 310;
@@ -62,10 +115,10 @@ function DrawShadows() {
   bmd.addToWorld();
   var ctx = bmd.context;
   var grd = bmd.context.createLinearGradient(
-    game.world.centerX,
-    game.world.centerY - shadowOffsetUp,
-    game.world.centerX,
-    game.world.centerY + shadowOffsetDown,
+    this.world.centerX,
+    this.world.centerY - shadowOffsetUp,
+    this.world.centerX,
+    this.world.centerY + shadowOffsetDown,
   );
   grd.addColorStop(0, 'rgba(0, 0, 0, 0)');
   grd.addColorStop(0.5, 'rgba(0, 0, 0, 1)');
@@ -73,14 +126,14 @@ function DrawShadows() {
   ctx.fillStyle = grd;
 
   ctx.beginPath();
-  ctx.moveTo(game.world.centerX, game.world.centerY);
+  ctx.moveTo(this.world.centerX, this.world.centerY);
   ctx.lineTo(
-    game.world.centerX - shadowOffsetLeft,
-    game.world.centerY + shadowOffsetDown,
+    this.world.centerX - shadowOffsetLeft,
+    this.world.centerY + shadowOffsetDown,
   );
   ctx.lineTo(
-    game.world.centerX + shadowOffsetRight,
-    game.world.centerY + shadowOffsetDown,
+    this.world.centerX + shadowOffsetRight,
+    this.world.centerY + shadowOffsetDown,
   );
   ctx.fill();
   ctx.closePath();
@@ -89,10 +142,10 @@ function DrawShadows() {
   shadowOffsetDown = 130;
 
   grd = bmd.context.createLinearGradient(
-    game.world.centerX - shadowOffsetLeft,
-    game.world.centerY,
-    game.world.centerX + shadowOffsetRight,
-    game.world.centerY,
+    this.world.centerX - shadowOffsetLeft,
+    this.world.centerY,
+    this.world.centerX + shadowOffsetRight,
+    this.world.centerY,
   );
   grd.addColorStop(0, 'rgba(0, 0, 0, 0)');
   grd.addColorStop(0.5, 'rgba(0, 0, 0, 1)');
@@ -100,14 +153,14 @@ function DrawShadows() {
   ctx.fillStyle = grd;
 
   ctx.beginPath();
-  ctx.moveTo(game.world.centerX + 3, game.world.centerY);
+  ctx.moveTo(this.world.centerX + 3, this.world.centerY);
   ctx.lineTo(
-    game.world.centerX - shadowOffsetLeft,
-    game.world.centerY - shadowOffsetUp,
+    this.world.centerX - shadowOffsetLeft,
+    this.world.centerY - shadowOffsetUp,
   );
   ctx.lineTo(
-    game.world.centerX - shadowOffsetRight,
-    game.world.centerY + shadowOffsetDown,
+    this.world.centerX - shadowOffsetRight,
+    this.world.centerY + shadowOffsetDown,
   );
   ctx.fill();
   ctx.closePath();
@@ -116,37 +169,19 @@ function DrawShadows() {
   shadowOffsetDown = 100;
 
   ctx.beginPath();
-  ctx.moveTo(game.world.centerX, game.world.centerY);
+  ctx.moveTo(this.world.centerX, this.world.centerY);
   ctx.lineTo(
-    game.world.centerX + shadowOffsetRight,
-    game.world.centerY - shadowOffsetUp,
+    this.world.centerX + shadowOffsetRight,
+    this.world.centerY - shadowOffsetUp,
   );
   ctx.lineTo(
-    game.world.centerX + shadowOffsetRight,
-    game.world.centerY + shadowOffsetDown,
+    this.world.centerX + shadowOffsetRight,
+    this.world.centerY + shadowOffsetDown,
   );
   ctx.fill();
   ctx.closePath();
 }
 
-function update() {
-  // actionOnClick();
-}
+function update() {}
 
-function actionOnClick() {
-  // street.y -= .1;
-  // street.x -= .75;
-
-  // street.scale.x -= 0.01;
-  // street.scale.y -= 0.01;
-  // if (street.y < 294.9) {
-  //   street.y = 299;
-  //   street.x = game.world.centerX;
-  //   street.scale.setTo(1, 1);
-  // }
-  // console.log(street.y);
-  //leftWall.x += 0.1;
-  //leftWall.scale.x -= .1;
-  // leftWall.scale.y -= .1;
-
-}
+function actionOnClick() {}

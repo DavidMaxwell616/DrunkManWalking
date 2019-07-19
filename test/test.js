@@ -24,25 +24,19 @@ function preload() {
   var progressBox = this.add.graphics();
   progressBox.fillStyle(0x222222, 0.8);
   progressBox.fillRect(340, 270, 320, 50);
-  this.load.on('progress', function (value) {
-    console.log(value);
-  });
+  this.load.on('progress', function (value) {});
 
-  this.load.on('fileprogress', function (file) {
-    console.log(file.src);
-  });
+  this.load.on('fileprogress', function (file) {});
 
   this.load.on('complete', function () {
-    console.log('complete');
     progressBar.destroy();
     progressBox.destroy();
     loadingText.destroy();
     percentText.destroy();
   });
   this.load.on('progress', function (value) {
-    console.log(value);
     progressBar.clear();
-    progressBar.fillStyle(0xffffff, 1);
+    progressBar.fillStyle(0xff8c00, 1);
     progressBar.fillRect(350, 280, 300 * value, 30);
     percentText.setText(parseInt(value * 100) + '%');
   });
@@ -72,21 +66,28 @@ function preload() {
   percentText.setOrigin(0.5, 0.5);
   this.load.image('walls', '../assets/images/walls.svg');
   this.load.animation('streetMove', '../assets/json/animations.json');
-  this.load.animation('leftWallMove', '../assets/json/animations.json');
-  this.load.animation('rightWallMove', '../assets/json/animations.json');
-  //console.log(this.anims);
-  this.load.path = '../assets/images/leftWall/';
-  for (let index = 1; index < 201; index++) {
-    this.load.image('leftWall' + index, index + '.svg');
-  }
-  this.load.path = '../assets/images/rightWall/';
-  for (let index = 1; index < 201; index++) {
-    this.load.image('rightWall' + index, index + '.svg');
-  }
   this.load.path = '../assets/images/street/';
   for (let index = 1; index < 51; index++) {
     this.load.image('street' + index, index + '.svg');
   }
+
+  this.load.path = '../assets/images/leftWall/';
+  this.load.image('leftWall1', '1.svg');
+  this.load.path = '../assets/images/rightWall/';
+  this.load.image('rightWall1', '1.svg');
+
+  // this.load.animation('leftWallMove', '../assets/json/animations.json');
+  // this.load.animation('rightWallMove', '../assets/json/animations.json');
+  //console.log(this.anims);
+  // this.load.path = '../assets/images/leftWall/';
+  // for (let index = 1; index < 201; index++) {
+  //   this.load.image('leftWall' + index, index + '.svg');
+  // }
+  // this.load.path = '../assets/images/rightWall/';
+  // for (let index = 1; index < 201; index++) {
+  //   this.load.image('rightWall' + index, index + '.svg');
+  // }
+
 }
 
 function create() {
@@ -95,11 +96,11 @@ function create() {
   // const walls = this.add.image(420, 250, 'walls');
   // walls.setScale(2);
 
-  leftWall = this.add.sprite(800, 500, 'leftWall1').play('leftWallMove');
+  leftWall = this.add.sprite(-500, -260, 'leftWall1'); //.play('leftWallMove');
 
-  rightWall = this.add.sprite(1400, -270, 'rightWall1').play('rightWallMove');
+  rightWall = this.add.sprite(1400, -270, 'rightWall1'); //.play('rightWallMove');
 
-  //DrawShadows();
+  DrawShadows();
 }
 
 function DrawShadows() {

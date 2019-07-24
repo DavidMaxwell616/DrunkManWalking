@@ -14,7 +14,7 @@ var config = {
 var game = new Phaser.Game(config);
 
 function create() {
-  if (!startGame) mainMenuCreate();
+  if (!startGame) mainMenuCreate(this);
   else gameCreate();
 }
 
@@ -23,6 +23,19 @@ function gameCreate() {
   // background = game.add.image(0, 0, 'background');
   // background.width = game.width;
   // background.height = game.height;
+  street = this.add.sprite(840, 500, 'street1').play('streetMove');
+
+  //const walls = this.add.image(420, 250, 'walls');
+  //walls.setScale(2);
+
+  leftWall = this.add.sprite(-500, -267, 'leftWall1').play('leftWallMove');
+
+  rightWall = this.add.sprite(1500, -267, 'rightWall1').play('rightWallMove');
+
+  // var shadow = this.add.graphics();
+  // shadow.fillStyle(0x000000);
+  // shadow.fillRect(430, 270, 120, 50);
+  DrawShadows(this);
 
   street = game.add.image(game.world.centerX, game.world.centerY, 'street');
   street.anchor.x = .4;
@@ -164,7 +177,7 @@ function DrawShadows() {
 // is called every frame
 function update() {
   if (!startGame) {
-    mainMenuUpdate();
+    mainMenuUpdate(this);
     return;
   }
   if (!walking)

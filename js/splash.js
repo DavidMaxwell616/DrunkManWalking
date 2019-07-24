@@ -1,12 +1,10 @@
-function mainMenuCreate() {
-    maxxdaddy = game.add.image(game.width * 0.85, game.height * 0.95, 'maxxdaddy');
-
-  game.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+function mainMenuCreate(game) {
+  maxxdaddy = game.add.image(game.width * 0.85, game.height * 0.95, 'maxxdaddy');
 }
 
-function mainMenuUpdate() {
-  if (game.spaceKey.isDown) {
+function mainMenuUpdate(game) {
+  game.input.keyboard.on('keyup_SPACE', (event) => {
     gameCreate();
     startGame = true;
-  }
+  });
 }

@@ -73,20 +73,20 @@ function preload() {
   this.scale.refresh();
 
   // this.load.image('splash', '../assets/images/splash.png');
-  this.load.image('maxxdaddy', 'assets/images/maxxdaddy.gif');
-  this.load.image('background', '../assets/images/background.png');
-  this.load.image('walls', '../assets/images/walls.png');
-  this.load.image('leftWall', '../assets/images/left wall.png');
-  this.load.image('rightWall', '../assets/images/right wall.png');
-  this.load.image('street', '../assets/images/road.png');
-  this.load.image('awning', '../assets/images/awning.png');
-  this.load.image('head', '../assets/images/head.png');
-  this.load.image('body&legs', '../assets/images/body&legs.png');
-  this.load.image('arms', '../assets/images/arms.png');
-  this.load.image('start', '../assets/images/start.png');
-  this.load.image('rightArm3', '../assets/images/rightarm3.png');
-  this.load.image('leftArm', '../assets/images/leftArm.png');
-  this.load.image('bottle', '../assets/images/bottle.png');
+  this.load.path = '../assets/images/';
+  this.load.image('maxxdaddy', 'maxxdaddy.gif');
+  this.load.image('background', 'background.png');
+  this.load.image('walls', 'walls.png');
+  this.load.image('leftWall', 'left wall.png');
+  this.load.image('rightWall', 'right wall.png');
+  this.load.image('awning', 'awning.png');
+  this.load.image('head', 'head.png');
+  this.load.image('body&legs', 'body&legs.png');
+  this.load.image('arms', 'arms.png');
+  this.load.image('start', 'start.png');
+  this.load.image('rightArm3', 'rightarm3.png');
+  this.load.image('leftArm', 'leftArm.png');
+  this.load.image('bottle', 'bottle.png');
 
 
 }

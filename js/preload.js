@@ -1,25 +1,92 @@
 function preload() {
-  game.load.crossOrigin = 'anonymous';
+  var progressBar = this.add.graphics();
+  var progressBox = this.add.graphics();
+  progressBox.fillStyle(0x222222, 0.8);
+  progressBox.fillRect(340, 270, 320, 50);
+  this.load.on('progress', function (value) {});
 
-  game.scale.pageAlignHorizontally = true;
-  game.scale.pageAlignVertically = true;
-  game.scale.refresh();
+  this.load.on('fileprogress', function (file) {});
 
-  // game.load.image('splash', '../assets/images/splash.png');
-  game.load.image('maxxdaddy', '../assets/images/maxxdaddy.gif');
-  game.load.image('background', '../assets/images/background.png');
-  game.load.image('walls', '../assets/images/walls.png');
-  game.load.image('leftWall', '../assets/images/left wall.png');
-  game.load.image('rightWall', '../assets/images/right wall.png');
-  game.load.image('street', '../assets/images/road.png');
-  game.load.image('awning', '../assets/images/awning.png');
-  game.load.image('head', '../assets/images/head.png');
-  game.load.image('body&legs', '../assets/images/body&legs.png');
-  game.load.image('arms', '../assets/images/arms.png');
-  game.load.image('start', '../assets/images/start.png');
-  game.load.image('rightArm3', '../assets/images/rightarm3.png');
-  game.load.image('leftArm', '../assets/images/leftArm.png');
-  game.load.image('bottle', '../assets/images/bottle.png');
+  this.load.on('complete', function () {
+    progressBar.destroy();
+    progressBox.destroy();
+    loadingText.destroy();
+    percentText.destroy();
+  });
+  this.load.on('progress', function (value) {
+    progressBar.clear();
+    progressBar.fillStyle(0xff8c00, 1);
+    progressBar.fillRect(350, 280, 300 * value, 30);
+    percentText.setText(parseInt(value * 100) + '%');
+  });
+
+  var width = this.cameras.main.width;
+  var height = this.cameras.main.height;
+  var loadingText = this.make.text({
+    x: width / 2,
+    y: height / 2 - 50,
+    text: 'Loading...',
+    style: {
+      font: '20px monospace',
+      fill: '#ffffff'
+    }
+  });
+  loadingText.setOrigin(0.5, 0.5);
+
+  var percentText = this.make.text({
+    x: width / 2,
+    y: height / 2 - 5,
+    text: '0%',
+    style: {
+      font: '18px monospace',
+      fill: '#ffffff'
+    }
+  });
+  percentText.setOrigin(0.5, 0.5);
+
+  this.load.image('walls', '../assets/images/walls.png');
+  this.load.animation('streetMove', '../assets/json/animations.json');
+  this.load.path = '../assets/images/street/';
+  for (let index = 1; index < 51; index++) {
+    this.load.image('street' + index, index + '.svg');
+  }
+
+  this.load.path = '../assets/images/leftWall/';
+  this.load.image('leftWall1', '1.svg');
+  this.load.path = '../assets/images/rightWall/';
+  this.load.image('rightWall1', '1.svg');
+
+  // this.load.animation('leftWallMove', '../assets/json/animations.json');
+  // this.load.animation('rightWallMove', '../assets/json/animations.json');
+  //console.log(this.anims);
+  // this.load.path = '../assets/images/leftWall/';
+  // for (let index = 1; index < 201; index++) {
+  //   this.load.image('leftWall' + index, index + '.svg');
+  // }
+  // this.load.path = '../assets/images/rightWall/';
+  // for (let index = 1; index < 201; index++) {
+  //   this.load.image('rightWall' + index, index + '.svg');
+  // }
+
+  this.scale.pageAlignHorizontally = true;
+  this.scale.pageAlignVertically = true;
+  this.scale.refresh();
+
+  // this.load.image('splash', '../assets/images/splash.png');
+  this.load.image('maxxdaddy', 'assets/images/maxxdaddy.gif');
+  this.load.image('background', '../assets/images/background.png');
+  this.load.image('walls', '../assets/images/walls.png');
+  this.load.image('leftWall', '../assets/images/left wall.png');
+  this.load.image('rightWall', '../assets/images/right wall.png');
+  this.load.image('street', '../assets/images/road.png');
+  this.load.image('awning', '../assets/images/awning.png');
+  this.load.image('head', '../assets/images/head.png');
+  this.load.image('body&legs', '../assets/images/body&legs.png');
+  this.load.image('arms', '../assets/images/arms.png');
+  this.load.image('start', '../assets/images/start.png');
+  this.load.image('rightArm3', '../assets/images/rightarm3.png');
+  this.load.image('leftArm', '../assets/images/leftArm.png');
+  this.load.image('bottle', '../assets/images/bottle.png');
 
 
 }

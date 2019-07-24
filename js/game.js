@@ -1,9 +1,17 @@
-const game = new Phaser.Game(1000, 500, Phaser.AUTO, 'game', {
-  preload,
-  create,
-  update,
-  render,
-});
+var config = {
+  width: 1000,
+  height: 500,
+  type: Phaser.AUTO,
+  backgroundColor: '#001133',
+  parent: 'game',
+  scene: {
+    preload: preload,
+    create: create,
+    update: update,
+  }
+};
+
+var game = new Phaser.Game(config);
 
 function create() {
   if (!startGame) mainMenuCreate();
@@ -11,8 +19,6 @@ function create() {
 }
 
 function gameCreate() {
-  game.stage.backgroundColor = '#001133';
-
   // reset the score
   // background = game.add.image(0, 0, 'background');
   // background.width = game.width;

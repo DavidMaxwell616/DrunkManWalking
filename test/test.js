@@ -64,62 +64,62 @@ function preload() {
     }
   });
   percentText.setOrigin(0.5, 0.5);
-  this.load.image('walls', '../assets/images/walls.svg');
+  // var walls = this.load.image('walls', '../assets/images/walls.png');
+  // walls.width = 1000;
   this.load.animation('streetMove', '../assets/json/animations.json');
+  this.load.animation('rightWallMove', '../assets/json/animations.json');
+  this.load.animation('leftWallMove', '../assets/json/animations.json');
   this.load.path = '../assets/images/street/';
   for (let index = 1; index < 51; index++) {
     this.load.image('street' + index, index + '.svg');
   }
 
   this.load.path = '../assets/images/leftWall/';
-  this.load.image('leftWall1', '1.svg');
+  for (let index = 1; index < 201; index++) {
+    this.load.image('leftWall' + index, index + '.svg');
+  }
+
   this.load.path = '../assets/images/rightWall/';
-  this.load.image('rightWall1', '1.svg');
-
-  // this.load.animation('leftWallMove', '../assets/json/animations.json');
-  // this.load.animation('rightWallMove', '../assets/json/animations.json');
-  //console.log(this.anims);
-  // this.load.path = '../assets/images/leftWall/';
-  // for (let index = 1; index < 201; index++) {
-  //   this.load.image('leftWall' + index, index + '.svg');
-  // }
-  // this.load.path = '../assets/images/rightWall/';
-  // for (let index = 1; index < 201; index++) {
-  //   this.load.image('rightWall' + index, index + '.svg');
-  // }
-
+  for (let index = 1; index < 201; index++) {
+    this.load.image('rightWall' + index, index + '.svg');
+  }
 }
 
 function create() {
-  street = this.add.sprite(800, 500, 'street1').play('streetMove');
+  street = this.add.sprite(840, 500, 'street1').play('streetMove');
 
-  // const walls = this.add.image(420, 250, 'walls');
-  // walls.setScale(2);
+  //const walls = this.add.image(420, 250, 'walls');
+  //walls.setScale(2);
 
-  leftWall = this.add.sprite(-500, -260, 'leftWall1'); //.play('leftWallMove');
+  leftWall = this.add.sprite(-500, -267, 'leftWall1').play('leftWallMove');
 
-  rightWall = this.add.sprite(1400, -270, 'rightWall1'); //.play('rightWallMove');
+  rightWall = this.add.sprite(1500, -267, 'rightWall1').play('rightWallMove');
 
-  DrawShadows();
+  // var shadow = this.add.graphics();
+  // shadow.fillStyle(0x000000);
+  // shadow.fillRect(430, 270, 120, 50);
+  DrawShadows(this);
 }
 
-function DrawShadows() {
-  //  Our BitmapData (same size as our canvas)
-  bmd = this.make.bitmapData(this.width, this.height);
+function DrawShadows(game) {
 
-  let shadowOffsetLeft = 240;
-  let shadowOffsetRight = 310;
+  var bmd = this.game.textures.createCanvas('shadows', 1000, 500);
+  const ctx = bmd.getContext('2d');
+  let shadowOffsetLeft = 490;
+  let shadowOffsetRight = 820;
   let shadowOffsetUp = 100;
-  let shadowOffsetDown = 100;
+  let shadowOffsetDown = 150;
 
-  //  Add it to the world or we can't see it
-  bmd.addToWorld();
-  var ctx = bmd.context;
-  var grd = bmd.context.createLinearGradient(
-    this.world.centerX,
-    this.world.centerY - shadowOffsetUp,
-    this.world.centerX,
-    this.world.centerY + shadowOffsetDown,
+  //ground shadow
+
+  let centerX = this.game.config.width / 2;
+  let centerY = this.game.config.height / 2;
+
+  var grd = ctx.createLinearGradient(
+    centerX,
+    centerY - shadowOffsetUp,
+    centerX,
+    centerY + shadowOffsetDown,
   );
   grd.addColorStop(0, 'rgba(0, 0, 0, 0)');
   grd.addColorStop(0.5, 'rgba(0, 0, 0, 1)');
@@ -127,26 +127,35 @@ function DrawShadows() {
   ctx.fillStyle = grd;
 
   ctx.beginPath();
-  ctx.moveTo(this.world.centerX, this.world.centerY);
+  ctx.moveTo(centerX, centerY);
   ctx.lineTo(
-    this.world.centerX - shadowOffsetLeft,
-    this.world.centerY + shadowOffsetDown,
+    centerX - shadowOffsetLeft,
+    centerY + shadowOffsetDown,
+  );
+  ctx.moveTo(centerX, centerY);
+  ctx.lineTo(
+    centerX - shadowOffsetLeft,
+    centerY + shadowOffsetDown,
   );
   ctx.lineTo(
-    this.world.centerX + shadowOffsetRight,
-    this.world.centerY + shadowOffsetDown,
+    centerX + shadowOffsetRight,
+    centerY + shadowOffsetDown,
   );
   ctx.fill();
   ctx.closePath();
 
-  shadowOffsetUp = 297;
+  //left wall shadow
+
+  shadowOffsetLeft = 220;
+  shadowOffsetRight = 330;
+  shadowOffsetUp = 397;
   shadowOffsetDown = 130;
 
-  grd = bmd.context.createLinearGradient(
-    this.world.centerX - shadowOffsetLeft,
-    this.world.centerY,
-    this.world.centerX + shadowOffsetRight,
-    this.world.centerY,
+  grd = ctx.createLinearGradient(
+    centerX - shadowOffsetLeft,
+    centerY,
+    centerX + shadowOffsetRight,
+    centerY,
   );
   grd.addColorStop(0, 'rgba(0, 0, 0, 0)');
   grd.addColorStop(0.5, 'rgba(0, 0, 0, 1)');
@@ -154,34 +163,44 @@ function DrawShadows() {
   ctx.fillStyle = grd;
 
   ctx.beginPath();
-  ctx.moveTo(this.world.centerX + 3, this.world.centerY);
+  ctx.moveTo(centerX + 3, centerY);
   ctx.lineTo(
-    this.world.centerX - shadowOffsetLeft,
-    this.world.centerY - shadowOffsetUp,
+    centerX - shadowOffsetLeft,
+    centerY - shadowOffsetUp,
   );
   ctx.lineTo(
-    this.world.centerX - shadowOffsetRight,
-    this.world.centerY + shadowOffsetDown,
+    centerX - shadowOffsetRight,
+    centerY + shadowOffsetDown,
   );
   ctx.fill();
   ctx.closePath();
 
-  shadowOffsetUp = 390;
+  //right wall shdow
+
+  shadowOffsetLeft = 220;
+  shadowOffsetRight = 530;
+  shadowOffsetUp = 490;
   shadowOffsetDown = 100;
+  centerX = this.game.config.width / 2;
 
   ctx.beginPath();
-  ctx.moveTo(this.world.centerX, this.world.centerY);
+  ctx.moveTo(centerX, centerY);
   ctx.lineTo(
-    this.world.centerX + shadowOffsetRight,
-    this.world.centerY - shadowOffsetUp,
+    centerX + shadowOffsetRight,
+    centerY - shadowOffsetUp,
   );
   ctx.lineTo(
-    this.world.centerX + shadowOffsetRight,
-    this.world.centerY + shadowOffsetDown,
+    centerX + shadowOffsetRight,
+    centerY + shadowOffsetDown,
   );
   ctx.fill();
   ctx.closePath();
+  bmd.refresh();
+
+  game.add.image(centerX - 50, centerY + 50, 'shadows').setScale(1.2);
+
 }
+
 
 function update() {}
 

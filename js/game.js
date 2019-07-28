@@ -14,103 +14,93 @@ var config = {
 var game = new Phaser.Game(config);
 
 function create() {
-  if (!startGame) mainMenuCreate(this);
-  else gameCreate();
-}
+  let centerX = this.game.config.width / 2;
+  let centerY = this.game.config.height / 2;
 
-function gameCreate() {
-  // reset the score
-  // background = game.add.image(0, 0, 'background');
-  // background.width = game.width;
-  // background.height = game.height;
-  street = this.add.sprite(840, 500, 'street1').play('streetMove');
+  street = this.add.sprite(840, 500, 'street1');
+  leftWall = this.add.sprite(-500, -267, 'leftWall1');
+  rightWall = this.add.sprite(1500, -257, 'rightWall1');
 
-  //const walls = this.add.image(420, 250, 'walls');
-  //walls.setScale(2);
-
-  leftWall = this.add.sprite(-500, -267, 'leftWall1').play('leftWallMove');
-
-  rightWall = this.add.sprite(1500, -267, 'rightWall1').play('rightWallMove');
-
-  // var shadow = this.add.graphics();
-  // shadow.fillStyle(0x000000);
-  // shadow.fillRect(430, 270, 120, 50);
   DrawShadows(this);
 
-  street = game.add.image(game.world.centerX, game.world.centerY, 'street');
-  street.anchor.x = .4;
-  street.anchor.y = 0;
+  awning = this.add.sprite(centerX + 120, centerY + 40, 'awning');
+  awning.setScale(.3);
 
-  // walls = game.add.image(0, 0, 'walls');
-  // walls.width = game.width;
-  // walls.height = game.height;
+  head = this.add.image(0, -130, 'head');
+  head2 = this.add.image(0, -130, 'head');
+  leftArm = this.add.image(40, -70, 'leftArm');
+  leftArm2 = this.add.image(40, -70, 'leftArm');
+  bottle = this.add.image(70, -50, 'bottle');
+  bottle2 = this.add.image(70, -50, 'bottle');
+  rightArm = this.add.image(-25, -95, 'rightArm').setOrigin(1, 0);
+  rightArm2 = this.add.image(-25, -95, 'rightArm2').setOrigin(1, 0);
+  body = this.add.image(-10, -70, 'body');
+  legs = this.add.sprite(-10, 30, 'legs');
+  bodyandlegs = this.add.image(-10, -10, 'body&legs');
+  this.anims.create({
+    key: 'walk',
+    frames: this.anims.generateFrameNumbers('legs', {
+      start: 0,
+      end: 7
+    }),
+    frameRate: 10,
+    repeat: -1
+  });
+  start = this.add.image(-120, -110, 'start');
+  start.name = 'start';
+  start.setInteractive();
+  this.input.on('gameobjectdown', onObjectClicked);
+  drunkardWalking = this.add.container(centerX, centerY + 70, [body, legs, head, leftArm, rightArm, bottle]);
+  drunkardWalking.setSize(64, 64);
+  drunkardWalking.visible = false;
+  drunkardStanding = this.add.container(centerX, centerY + 70, [bodyandlegs, head2, leftArm2, rightArm2, start, bottle2]);
+  drunkardStanding.setSize(64, 64);
 
-  // leftWall = game.add.image(-200, -510, 'leftWall');
-  // leftWall.width = game.width * 0.7;
-  // leftWall.height = game.height * 2;
+  scoreText = this.add.text(16, 16, 'Score: 0', {
+    fontFamily: 'arial',
+    fontSize: '32px',
+    fontStyle: 'bold',
+    fill: '#ff4500'
+  });
+  gameOverText = this.add.text(centerX - 100, centerY - 100, 'GAME OVER\nYour Score: 0\nHigh Score: 0', {
+    fontFamily: 'arial',
+    fontSize: '32px',
+    fontStyle: 'bold',
+    fill: '#ff4500'
+  });
+  gameOverText.visible = false;
 
-  // rightWall = game.add.image(game.width / 2, -547, 'rightWall');
-  // rightWall.width = game.width * 0.7;
-  // rightWall.height = game.height * 2;
+  falling = this.add.sprite(0, 0, 'falling1')
+  falling.visible = false;
+  maxxdaddy = this.add.image(this.game.config.width * 0.95, this.game.config.height * 0.95, 'maxxdaddy');
+  this.input.mouse.capture = true;
 
-  // awning = game.add.image(game.width * 0.565, game.height * 0.37, 'awning');
-  // awning.width = 200;
-  // awning.height = 160;
-
-  // DrawShadows();
-
-  maxxdaddy.visible = false;
-
-  bodyandlegs = game.add.image(game.world.centerX, game.world.centerY, 'body&legs');
-  bodyandlegs.anchor.x = 0.5;
-  bodyandlegs.anchor.y = 0;
-
-  //arms = game.add.image(game.world.centerX, 300, 'arms');
-  head = game.add.image(game.world.centerX + 10, game.world.centerY - 30, 'head');
-  head.anchor.set(0.5);
-
-  rightArm3 = game.add.image(game.world.centerX - 35, game.world.centerY + 25, 'rightArm3');
-  rightArm3.anchor.set(0.5);
-
-  leftArm = game.add.image(game.world.centerX + 43, game.world.centerY + 35, 'leftArm');
-  leftArm.anchor.set(0.5);
-
-  bottle = game.add.image(game.world.centerX + 70, game.world.centerY + 55, 'bottle');
-  bottle.anchor.set(0.5);
-
-  start = game.add.image(game.world.centerX - 70, game.world.centerY, 'start');
-  start.anchor.set(0.5);
-  start.inputEnabled = true;
-  start.events.onInputDown.add(startWalking => walking = true, this);
-
-  scoreText = game.add.text(
-    game.world.centerX,
-    game.height * 0.95,
-    'SCORE: 0', {
-      fontSize: '18px',
-      fill: '#eee',
-    },
-  );
 }
 
+function onObjectClicked(pointer, gameObject) {
+  if (gameObject.name == 'start')
+    walking = true;
+}
 
-function DrawShadows() {
-  //  Our BitmapData (same size as our canvas)
-  bmd = game.make.bitmapData(game.width, game.height);
+function DrawShadows(game) {
 
-  let shadowOffsetLeft = 240;
-  let shadowOffsetRight = 310;
+  var bmd = this.game.textures.createCanvas('shadows', 1000, 500);
+  const ctx = bmd.getContext('2d');
+  let shadowOffsetLeft = 490;
+  let shadowOffsetRight = 820;
   let shadowOffsetUp = 100;
-  let shadowOffsetDown = 100;
+  let shadowOffsetDown = 150;
 
-  //  Add it to the world or we can't see it
-  bmd.addToWorld();
-  var ctx = bmd.context;
-  var grd = bmd.context.createLinearGradient(
-    game.world.centerX,
-    game.world.centerY - shadowOffsetUp,
-    game.world.centerX,
-    game.world.centerY + shadowOffsetDown,
+  //ground shadow
+
+  let centerX = this.game.config.width / 2;
+  let centerY = this.game.config.height / 2;
+
+  var grd = ctx.createLinearGradient(
+    centerX,
+    centerY - shadowOffsetUp,
+    centerX,
+    centerY + shadowOffsetDown,
   );
   grd.addColorStop(0, 'rgba(0, 0, 0, 0)');
   grd.addColorStop(0.5, 'rgba(0, 0, 0, 1)');
@@ -118,26 +108,35 @@ function DrawShadows() {
   ctx.fillStyle = grd;
 
   ctx.beginPath();
-  ctx.moveTo(game.world.centerX, game.world.centerY);
+  ctx.moveTo(centerX, centerY);
   ctx.lineTo(
-    game.world.centerX - shadowOffsetLeft,
-    game.world.centerY + shadowOffsetDown,
+    centerX - shadowOffsetLeft,
+    centerY + shadowOffsetDown,
+  );
+  ctx.moveTo(centerX, centerY);
+  ctx.lineTo(
+    centerX - shadowOffsetLeft,
+    centerY + shadowOffsetDown,
   );
   ctx.lineTo(
-    game.world.centerX + shadowOffsetRight,
-    game.world.centerY + shadowOffsetDown,
+    centerX + shadowOffsetRight,
+    centerY + shadowOffsetDown,
   );
   ctx.fill();
   ctx.closePath();
 
-  shadowOffsetUp = 300;
+  //left wall shadow
+
+  shadowOffsetLeft = 220;
+  shadowOffsetRight = 330;
+  shadowOffsetUp = 397;
   shadowOffsetDown = 130;
 
-  grd = bmd.context.createLinearGradient(
-    game.world.centerX - shadowOffsetLeft,
-    game.world.centerY,
-    game.world.centerX + shadowOffsetRight,
-    game.world.centerY,
+  grd = ctx.createLinearGradient(
+    centerX - shadowOffsetLeft,
+    centerY,
+    centerX + shadowOffsetRight,
+    centerY,
   );
   grd.addColorStop(0, 'rgba(0, 0, 0, 0)');
   grd.addColorStop(0.5, 'rgba(0, 0, 0, 1)');
@@ -145,70 +144,104 @@ function DrawShadows() {
   ctx.fillStyle = grd;
 
   ctx.beginPath();
-  ctx.moveTo(game.world.centerX, game.world.centerY);
+  ctx.moveTo(centerX + 3, centerY);
   ctx.lineTo(
-    game.world.centerX - shadowOffsetLeft,
-    game.world.centerY - shadowOffsetUp,
+    centerX - shadowOffsetLeft,
+    centerY - shadowOffsetUp,
   );
   ctx.lineTo(
-    game.world.centerX - shadowOffsetRight,
-    game.world.centerY + shadowOffsetDown,
+    centerX - shadowOffsetRight,
+    centerY + shadowOffsetDown,
   );
   ctx.fill();
   ctx.closePath();
 
-  shadowOffsetUp = 300;
+  //right wall shdow
+
+  shadowOffsetLeft = 220;
+  shadowOffsetRight = 530;
+  shadowOffsetUp = 490;
   shadowOffsetDown = 100;
+  centerX = this.game.config.width / 2;
 
   ctx.beginPath();
-  ctx.moveTo(game.world.centerX, game.world.centerY);
+  ctx.moveTo(centerX, centerY);
   ctx.lineTo(
-    game.world.centerX + shadowOffsetLeft,
-    game.world.centerY - shadowOffsetUp,
+    centerX + shadowOffsetRight,
+    centerY - shadowOffsetUp,
   );
   ctx.lineTo(
-    game.world.centerX + shadowOffsetRight,
-    game.world.centerY + shadowOffsetDown,
+    centerX + shadowOffsetRight,
+    centerY + shadowOffsetDown,
   );
   ctx.fill();
   ctx.closePath();
+  bmd.refresh();
+
+  game.add.image(centerX - 50, centerY + 50, 'shadows').setScale(1.2);
+
 }
-// the game loop. Game logic lives in here.
-// is called every frame
+
 function update() {
-  if (!startGame) {
-    mainMenuUpdate(this);
-    return;
-  }
   if (!walking)
     return;
-  street.x = game.world.centerX;
-  street.y -= .01;
-  streetShrink -= .01
-  //console.log(streetShrink);
-  if (streetShrink < 0.5) {
-    streetShrink = 1;
+  drunkardStanding.visible = false;
+  drunkardWalking.visible = true;
+  street.anims.play('streetMove', true);
+  legs.anims.play('walk', true);
+  leftWall.anims.play('leftWallMove', true);
+  //rightWall.play('rightWallMove');
+  stagger(this.input.x);
+}
+
+
+function stagger(mouseX) {
+  let centerX = this.game.config.width / 2;
+
+  if (standing) {
+    randomizer = Math.floor(Math.random() * 4);
+    wobble -= 0.5;
+    if (wobble < 3) {
+      wobble = 3;
+      fluctuation = 0.25;
+    }
+
+    score++;
+
+    if (corrector < randomizer)
+      corrector += .1;
+    if (corrector > randomizer)
+      corrector -= .1;
+    factor = mouseX / 40 - 10 + rotation / wobble;
+
+    rotation += (rotation + factor + corrector) / 1000; // * fluctuation;
+    drunkardWalking.rotation = rotation;
+    scoreText.setText('score: ' + score);
+    head.rotation = drunkardWalking.rotation * -1;
+    rightArm.rotation = drunkardWalking.rotation * 2;
+    legs.rotation = drunkardWalking.rotation / 2 * -1;
+    drunkardWalking.x = centerX + drunkardWalking.rotation;
+    if (drunkardWalking.rotation > .5 || drunkardWalking.rotation < -.5) {
+      drunkardWalking.visible = false;
+      falling.x = drunkardWalking.x;
+      falling.y = drunkardWalking.y;
+      if (drunkardWalking.rotation > .5)
+        falling.setScale(-1, 1);
+      else
+        falling.setScale(1, 1);
+      falling.visible = true;
+      falling.play('falling');
+      street.anims.stop();
+      leftWall.anims.stop();
+      gameOverText.visible = true;
+      if (score > highScore)
+        highScore = score;
+      gameOverText.setText('GAME OVER\nYour Score: ' + score + '\nHigh Score: ' + highScore);
+
+      rotation = 0;
+      standing = false;
+      walking = false;
+    }
+
   }
-  street.scale.setTo(streetShrink, streetShrink);
-}
-
-function clearLevel() {}
-
-function restart() {}
-
-function render() {
-  //if (level1bkgd != null)
-  //  game.debug.body(level1bkgd);
-  //  game.debug.bodyInfo(player, 32, 132);
-  //  game.debug.body(player);
-  // bricks.forEach(brick => {
-  //   game.debug.body(brick);
-  // });
-  // guards.forEach(guard => {
-  //   game.debug.body(guard);
-  // });
-}
-
-function restartGame() {
-  game.state.start(game.state.current);
 }

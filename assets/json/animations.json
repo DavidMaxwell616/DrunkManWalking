@@ -1816,6 +1816,44 @@
       ],
       "frameRate": 8,
       "repeat": -1
+    },
+    {
+      "key": "falling",
+      "frames": [{
+          "key": "falling1",
+          "frame": null
+        },
+        {
+          "key": "falling2",
+          "frame": null
+        },
+        {
+          "key": "falling3",
+          "frame": null
+        },
+        {
+          "key": "falling4",
+          "frame": null
+        },
+        {
+          "key": "falling5",
+          "frame": null
+        },
+        {
+          "key": "falling6",
+          "frame": null
+        },
+        {
+          "key": "falling7",
+          "frame": null
+        },
+        {
+          "key": "falling8",
+          "frame": null
+        }
+      ],
+      "frameRate": 8,
+      "repeat": 0
     }
   ]
 }

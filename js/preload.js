@@ -3,27 +3,26 @@ function preload() {
   this.load.image('walls', '../assets/images/walls.png');
   this.load.animation('streetMove', '../assets/json/animations.json');
   this.load.animation('falling', '../assets/json/animations.json');
-  this.load.animation('leftWallMove', '../assets/json/animations.json');
-  this.load.animation('rightWallMove', '../assets/json/animations.json');
+  //  this.load.animation('leftWallMove', '../assets/json/animations.json');
+  //  this.load.animation('rightWallMove', '../assets/json/animations.json');
   this.load.path = '../assets/images/street/';
   for (let index = 1; index < 51; index++) {
     this.load.image('street' + index, index + '.svg');
   }
 
-  // this.load.path = '../assets/images/leftWall/';
-  // this.load.image('leftWall1', '1.svg');
-  // this.load.path = '../assets/images/rightWall/';
-  // this.load.image('rightWall1', '1.svg');
-
-  console.log(this.anims);
   this.load.path = '../assets/images/leftWall/';
-  for (let index = 1; index < 201; index++) {
-    this.load.image('leftWall' + index, index + '.svg');
-  }
+  this.load.image('leftWall1', '1.svg');
   this.load.path = '../assets/images/rightWall/';
-  for (let index = 1; index < 201; index++) {
-    this.load.image('rightWall' + index, index + '.svg');
-  }
+  this.load.image('rightWall1', '1.svg');
+
+  // this.load.path = '../assets/images/leftWall/';
+  // for (let index = 1; index < 201; index++) {
+  //   this.load.image('leftWall' + index, index + '.svg');
+  // }
+  // this.load.path = '../assets/images/rightWall/';
+  // for (let index = 1; index < 201; index++) {
+  //   this.load.image('rightWall' + index, index + '.svg');
+  // }
 
   this.scale.pageAlignHorizontally = true;
   this.scale.pageAlignVertically = true;
@@ -73,7 +72,7 @@ function showLoader(game) {
   });
   game.load.on('progress', function (value) {
     progressBar.clear();
-    progressBar.fillStyle(0xff8c00, 1);
+    progressBar.fillStyle(0xff4500, 1);
     progressBar.fillRect(350, 280, 300 * value, 30);
     percentText.setText(parseInt(value * 100) + '%');
   });

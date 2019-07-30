@@ -29,3 +29,6 @@ let falling;
 let walking = false;
 let gameOverText;
 let highScore = 0;
+let awningShrink = 1;
+let leftWallScale = 1;
+let rightWallScale = 1;

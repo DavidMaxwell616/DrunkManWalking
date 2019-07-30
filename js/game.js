@@ -24,6 +24,7 @@ function create() {
   DrawShadows(this);
 
   awning = this.add.sprite(centerX + 120, centerY + 40, 'awning');
+  awningShrink = .3;
   awning.setScale(.3);
 
   head = this.add.image(0, -130, 'head');
@@ -50,10 +51,10 @@ function create() {
   start.name = 'start';
   start.setInteractive();
   this.input.on('gameobjectdown', onObjectClicked);
-  drunkardWalking = this.add.container(centerX, centerY + 70, [body, legs, head, leftArm, rightArm, bottle]);
+  drunkardWalking = this.add.container(centerX, centerY + 100, [body, legs, head, leftArm, rightArm, bottle]);
   drunkardWalking.setSize(64, 64);
   drunkardWalking.visible = false;
-  drunkardStanding = this.add.container(centerX, centerY + 70, [bodyandlegs, head2, leftArm2, rightArm2, start, bottle2]);
+  drunkardStanding = this.add.container(centerX, centerY + 100, [bodyandlegs, head2, leftArm2, rightArm2, start, bottle2]);
   drunkardStanding.setSize(64, 64);
 
   scoreText = this.add.text(16, 16, 'Score: 0', {
@@ -72,7 +73,7 @@ function create() {
 
   falling = this.add.sprite(0, 0, 'falling1')
   falling.visible = false;
-  maxxdaddy = this.add.image(this.game.config.width * 0.95, this.game.config.height * 0.95, 'maxxdaddy');
+  maxxdaddy = this.add.image(this.game.config.width * 0.9, this.game.config.height * 0.95, 'maxxdaddy');
   this.input.mouse.capture = true;
 
 }
@@ -189,7 +190,7 @@ function update() {
   drunkardWalking.visible = true;
   street.anims.play('streetMove', true);
   legs.anims.play('walk', true);
-  leftWall.anims.play('leftWallMove', true);
+  //leftWall.anims.play('leftWallMove', true);
   //rightWall.play('rightWallMove');
   stagger(this.input.x);
 }
@@ -205,6 +206,32 @@ function stagger(mouseX) {
       wobble = 3;
       fluctuation = 0.25;
     }
+    awning.alpha -= .0005;
+    awningShrink -= .0002;
+    awning.x -= .1;
+    if (awning.alpha < 0)
+      awning.visible = false;
+    awning.setScale(awningShrink, awningShrink);
+
+    rightWallScale -= .0005;
+    rightWall.x -= .55;
+    rightWall.y += .27;
+    if (rightWallScale < .275) {
+      rightWallScale = 1;
+      rightWall.x = 1500;
+      rightWall.y = -257;
+    }
+    rightWall.setScale(rightWallScale, rightWallScale);
+
+    leftWallScale -= .0007;
+    leftWall.x += .65;
+    leftWall.y += .4;
+    if (leftWallScale < .19) {
+      leftWallScale = 1;
+      leftWall.x = -500;
+      leftWall.y = -267;
+    }
+    leftWall.setScale(leftWallScale, leftWallScale);
 
     score++;
 

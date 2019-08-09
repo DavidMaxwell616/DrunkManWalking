@@ -14,26 +14,20 @@ var config = {
 var game = new Phaser.Game(config);
 
 let street;
-let button;
 let leftWall;
 let rightWall;
 let walls;
 let awning;
-let awningShrink = 1;
-let leftWallScale = 1;
-let rightWallScale = 1;
 
 function preload() {
   showLoader(this);
 
   // var walls = this.load.image('walls', '../assets/images/walls.png');
   // walls.width = 1000;
-  this.load.animation('streetMove', '../assets/json/animations.json');
-
   this.load.path = '../assets/images/street/';
-  for (let index = 1; index < 51; index++) {
-    this.load.image('street' + index, index + '.svg');
-  }
+
+  this.load.image('street', '1.svg');
+
   this.load.path = '../assets/images/leftWall/';
   this.load.image('leftWall1', '1.svg');
   this.load.path = '../assets/images/rightWall/';
@@ -45,18 +39,35 @@ function preload() {
 }
 
 function create() {
-  let centerX = this.game.config.width / 2;
-  let centerY = this.game.config.height / 2;
-  street = this.add.sprite(840, 500, 'street1');
+  const centerX = this.game.config.width / 2;
+  const centerY = this.game.config.height / 2;
+  street = this.add.image(centerX + 45, centerY + 60, 'street').setOrigin(.4, 0);
+  street.setScale(1, 1);
+  this.tweens.add({
+    targets: street,
+    scale: .55,
+    ease: 'Linear',
+    repeat: -1,
+    yoyo: false,
+    duration: 2500,
+  });
+  this.tweens.add({
+    targets: street,
+    x: 510,
+    Y: 170,
+    ease: 'Linear',
+    repeat: -1,
+    yoyo: false,
+    duration: 2500,
+  });
   leftWall = this.add.sprite(-500, -267, 'leftWall1');
   rightWall = this.add.sprite(1500, -257, 'rightWall1');
   //const walls = this.add.image(420, 250, 'walls');
   //walls.setScale(2);
-  DrawShadows(this);
+  //DrawShadows(this);
   awning = this.add.sprite(centerX + 120, centerY + 40, 'awning');
   awningShrink = .3;
   awning.setScale(.3);
-  street.anims.play('streetMove', true);
   scoreText = this.add.text(16, 16, 'Score: 0', {
     fontFamily: 'arial',
     fontSize: '32px',
@@ -167,34 +178,35 @@ function DrawShadows(game) {
 
 
 function update() {
-  awning.alpha -= .0005;
-  awningShrink -= .0002;
-  awning.x -= .1;
-  if (awning.alpha < 0)
-    awning.visible = false;
-  awning.setScale(awningShrink, awningShrink);
+  // awning.alpha -= .0005;
+  // awningShrink -= .0002;
+  // awning.x -= .1;
+  // if (awning.alpha < 0)
+  //   awning.visible = false;
+  // awning.setScale(awningShrink, awningShrink);
 
-  scoreText.setText('leftWallScale: ' + leftWallScale);
+  // scoreText.setText('leftWallScale: ' + leftWallScale);
 
-  rightWallScale -= .0005;
-  rightWall.x -= .55;
-  rightWall.y += .27;
-  if (rightWallScale < .275) {
-    rightWallScale = 1;
-    rightWall.x = 1500;
-    rightWall.y = -257;
-  }
-  rightWall.setScale(rightWallScale, rightWallScale);
+  // rightWallScale -= .0005;
+  // rightWall.x -= .55;
+  // rightWall.y += .27;
+  // if (rightWallScale < .275) {
+  //   rightWallScale = 1;
+  //   rightWall.x = 1500;
+  //   rightWall.y = -257;
+  // }
+  // rightWall.setScale(rightWallScale, rightWallScale);
+  // leftWallScale -= .00075;
+  // leftWall.x += .69;
+  // leftWall.y += .43;
 
-  leftWallScale -= .0007;
-  leftWall.x += .65;
-  leftWall.y += .4;
-  if (leftWallScale < .19) {
-    leftWallScale = 1;
-    leftWall.x = -500;
-    leftWall.y = -267;
-  }
-  leftWall.setScale(leftWallScale, leftWallScale);
+
+  // if (leftWallScale < .198) {
+  //   leftWallScale = 1;
+  //   leftWall.x = -500;
+  //   leftWall.y = -267;
+  // }
+  // leftWall.setScale(leftWallScale, leftWallScale);
 }
 
 function showLoader(game) {

@@ -41,20 +41,13 @@ function preload() {
 function create() {
   const centerX = this.game.config.width / 2;
   const centerY = this.game.config.height / 2;
-  street = this.add.image(centerX + 45, centerY + 60, 'street').setOrigin(.4, 0);
-  street.setScale(1, 1);
+  street = this.add.image(centerX + 45, centerY + 70, 'street').setOrigin(.4, 0);
+  street.setScale(1.2, 1.2);
   this.tweens.add({
     targets: street,
-    scale: .55,
-    ease: 'Linear',
-    repeat: -1,
-    yoyo: false,
-    duration: 2500,
-  });
-  this.tweens.add({
-    targets: street,
+    scale: .7,
     x: 510,
-    Y: 170,
+    y: 300,
     ease: 'Linear',
     repeat: -1,
     yoyo: false,

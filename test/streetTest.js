@@ -18,10 +18,18 @@ let leftWall;
 let rightWall;
 let walls;
 let awning;
+let streetTween;
+let leftWallTween;
+let rightWallTween;
+let leftWallScale = 1;
+let leftWallShrink = .005;
+let leftWallScaleDrag = .00001;
+let rightWallScale = 1;
 
 function preload() {
   showLoader(this);
-
+  let x = 8 / 2 * (2 + 2);
+  //console.log(x);
   // var walls = this.load.image('walls', '../assets/images/walls.png');
   // walls.width = 1000;
   this.load.path = '../assets/images/street/';
@@ -41,23 +49,44 @@ function preload() {
 function create() {
   const centerX = this.game.config.width / 2;
   const centerY = this.game.config.height / 2;
-  street = this.add.image(centerX + 45, centerY + 70, 'street').setOrigin(.4, 0);
-  street.setScale(1.2, 1.2);
-  this.tweens.add({
+  street = this.add.image(-734, 315, 'street').setOrigin(0, 0);
+  street.setScale(1, 1);
+  streetTween = this.tweens.add({
     targets: street,
-    scale: .7,
-    x: 510,
-    y: 300,
+    scale: .64,
+    x: -309,
+    y: 308,
     ease: 'Linear',
     repeat: -1,
     yoyo: false,
     duration: 2500,
   });
-  leftWall = this.add.sprite(-500, -267, 'leftWall1');
-  rightWall = this.add.sprite(1500, -257, 'rightWall1');
+  leftWall = this.add.sprite(-1473, -1340, 'leftWall1').setOrigin(0, 0).setScale(1, 1);
+  leftWallTween = this.tweens.add({
+    targets: leftWall,
+    scale: .23,
+    x: -10,
+    y: -70,
+    ease: 'Linear.easeOut',
+    repeat: -1,
+    yoyo: false,
+    duration: 4500,
+  });
+  rightWall = this.add.sprite(416, -1100, 'rightWall1').setOrigin(0, 0).setScale(1, 1);
+  rightWallTween = this.tweens.add({
+    targets: rightWall,
+    scale: .2,
+    x: 402,
+    y: -39,
+    ease: 'Linear.easeOut',
+    repeat: -1,
+    yoyo: false,
+    duration: 4500,
+  });
+
   //const walls = this.add.image(420, 250, 'walls');
   //walls.setScale(2);
-  //DrawShadows(this);
+  DrawShadows(this);
   awning = this.add.sprite(centerX + 120, centerY + 40, 'awning');
   awningShrink = .3;
   awning.setScale(.3);
@@ -189,15 +218,18 @@ function update() {
   //   rightWall.y = -257;
   // }
   // rightWall.setScale(rightWallScale, rightWallScale);
-  // leftWallScale -= .00075;
-  // leftWall.x += .69;
-  // leftWall.y += .43;
 
+  // leftWallScale -= leftWallShrink;
+  // leftWall.x += leftWallShrink * 1900;
+  // leftWall.y += leftWallShrink * 1650;
+  // leftWallShrink -= leftWallScaleDrag;
+  // //console.log(leftWallScale);
 
-  // if (leftWallScale < .198) {
+  // if (leftWallScale < .17) {
   //   leftWallScale = 1;
-  //   leftWall.x = -500;
-  //   leftWall.y = -267;
+  //   leftWall.x = -1473;
+  //   leftWall.y = -1340;
+  //   leftWallShrink = .005;
   // }
   // leftWall.setScale(leftWallScale, leftWallScale);
 }

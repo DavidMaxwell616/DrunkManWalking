@@ -72,12 +72,12 @@ function create() {
     yoyo: false,
     duration: 4500,
   });
-  rightWall = this.add.sprite(416, -1100, 'rightWall1').setOrigin(0, 0).setScale(1, 1);
+  rightWall = this.add.sprite(456, -1220, 'rightWall1').setOrigin(0, 0).setScale(1, 1);
   rightWallTween = this.tweens.add({
     targets: rightWall,
     scale: .2,
-    x: 402,
-    y: -39,
+    x: 432,
+    y: 10,
     ease: 'Linear.easeOut',
     repeat: -1,
     yoyo: false,
@@ -145,7 +145,7 @@ function DrawShadows(game) {
 
   shadowOffsetLeft = 220;
   shadowOffsetRight = 330;
-  shadowOffsetUp = 397;
+  shadowOffsetUp = 220;
   shadowOffsetDown = 130;
 
   grd = ctx.createLinearGradient(

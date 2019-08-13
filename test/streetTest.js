@@ -19,12 +19,9 @@ let rightWall;
 let walls;
 let awning;
 let streetTween;
+let awningTween;
 let leftWallTween;
 let rightWallTween;
-let leftWallScale = 1;
-let leftWallShrink = .005;
-let leftWallScaleDrag = .00001;
-let rightWallScale = 1;
 
 function preload() {
   showLoader(this);
@@ -85,9 +82,23 @@ function create() {
   });
 
   DrawShadows(this);
-  awning = this.add.sprite(centerX + 120, centerY + 40, 'awning');
-  awningShrink = .3;
-  awning.setScale(.3);
+  awning = this.add.sprite(centerX + 120, centerY + 40, 'awning').setScale(.3, .3);
+  awningTween = this.tweens.add({
+    targets: awning,
+    scale: 0,
+    x: centerX - 30,
+    y: centerY + 45,
+    ease: 'Linear.easeOut',
+    repeat: 0,
+    yoyo: false,
+    duration: 4500,
+  });
+
+
+
+
+
+
   scoreText = this.add.text(16, 16, 'Score: 0', {
     fontFamily: 'arial',
     fontSize: '32px',

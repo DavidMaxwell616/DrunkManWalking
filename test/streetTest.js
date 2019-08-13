@@ -75,9 +75,9 @@ function create() {
   rightWall = this.add.sprite(456, -1220, 'rightWall1').setOrigin(0, 0).setScale(1, 1);
   rightWallTween = this.tweens.add({
     targets: rightWall,
-    scale: .2,
-    x: 432,
-    y: 10,
+    scale: .15,
+    x: 452,
+    y: 70,
     ease: 'Linear.easeOut',
     repeat: -1,
     yoyo: false,

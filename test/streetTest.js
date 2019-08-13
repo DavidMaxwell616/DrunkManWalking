@@ -28,8 +28,7 @@ let rightWallScale = 1;
 
 function preload() {
   showLoader(this);
-  let x = 8 / 2 * (2 + 2);
-  //console.log(x);
+
   var walls = this.load.image('walls', '../assets/images/walls.svg');
   this.load.path = '../assets/images/street/';
 

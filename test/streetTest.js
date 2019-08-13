@@ -30,8 +30,7 @@ function preload() {
   showLoader(this);
   let x = 8 / 2 * (2 + 2);
   //console.log(x);
-  // var walls = this.load.image('walls', '../assets/images/walls.png');
-  // walls.width = 1000;
+  var walls = this.load.image('walls', '../assets/images/walls.svg');
   this.load.path = '../assets/images/street/';
 
   this.load.image('street', '1.svg');
@@ -47,6 +46,8 @@ function preload() {
 }
 
 function create() {
+  const walls = this.add.image(420, 250, 'walls');
+  walls.setScale(2);
   const centerX = this.game.config.width / 2;
   const centerY = this.game.config.height / 2;
   street = this.add.image(-734, 315, 'street').setOrigin(0, 0);
@@ -84,8 +85,6 @@ function create() {
     duration: 4500,
   });
 
-  //const walls = this.add.image(420, 250, 'walls');
-  //walls.setScale(2);
   DrawShadows(this);
   awning = this.add.sprite(centerX + 120, centerY + 40, 'awning');
   awningShrink = .3;

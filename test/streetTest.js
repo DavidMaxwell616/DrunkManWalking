@@ -7,7 +7,6 @@ var config = {
   scene: {
     preload: preload,
     create: create,
-    update: update,
   },
 };
 
@@ -58,12 +57,13 @@ function create() {
     yoyo: false,
     duration: 2500,
   });
+
   leftWall = this.add.sprite(-1473, -1340, 'leftWall1').setOrigin(0, 0).setScale(1, 1);
   leftWallTween = this.tweens.add({
     targets: leftWall,
     scale: .23,
     x: -10,
-    y: -70,
+    y: -75,
     ease: function (k) {
       return k * (2 - k)
     },
@@ -71,12 +71,13 @@ function create() {
     yoyo: false,
     duration: 4500,
   });
-  rightWall = this.add.sprite(456, -1220, 'rightWall1').setOrigin(0, 0).setScale(1, 1);
+
+  rightWall = this.add.sprite(456, -1225, 'rightWall1').setOrigin(0, 0).setScale(1, 1);
   rightWallTween = this.tweens.add({
     targets: rightWall,
     scale: .15,
     x: 452,
-    y: 70,
+    y: 75,
     ease: function (k) {
       return k * (2 - k)
     },
@@ -86,6 +87,7 @@ function create() {
   });
 
   DrawShadows(this);
+
   awning = this.add.sprite(centerX + 120, centerY + 40, 'awning').setScale(.3, .3);
   awningTween = this.tweens.add({
     targets: awning,
@@ -97,11 +99,6 @@ function create() {
     yoyo: false,
     duration: 4500,
   });
-
-
-
-
-
 
   scoreText = this.add.text(16, 16, 'Score: 0', {
     fontFamily: 'arial',
@@ -156,9 +153,9 @@ function DrawShadows(game) {
 
   //left wall shadow
 
-  shadowOffsetLeft = 220;
+  shadowOffsetLeft = 320;
   shadowOffsetRight = 330;
-  shadowOffsetUp = 220;
+  shadowOffsetUp = 320;
   shadowOffsetDown = 130;
 
   grd = ctx.createLinearGradient(
@@ -173,7 +170,7 @@ function DrawShadows(game) {
   ctx.fillStyle = grd;
 
   ctx.beginPath();
-  ctx.moveTo(centerX + 3, centerY);
+  ctx.moveTo(centerX, centerY);
   ctx.lineTo(
     centerX - shadowOffsetLeft,
     centerY - shadowOffsetUp,
@@ -189,7 +186,7 @@ function DrawShadows(game) {
 
   shadowOffsetLeft = 220;
   shadowOffsetRight = 530;
-  shadowOffsetUp = 490;
+  shadowOffsetUp = 495;
   shadowOffsetDown = 100;
   centerX = this.game.config.width / 2;
 
@@ -209,42 +206,6 @@ function DrawShadows(game) {
 
   game.add.image(centerX - 50, centerY + 50, 'shadows').setScale(1.2);
 
-}
-
-
-function update() {
-  // awning.alpha -= .0005;
-  // awningShrink -= .0002;
-  // awning.x -= .1;
-  // if (awning.alpha < 0)
-  //   awning.visible = false;
-  // awning.setScale(awningShrink, awningShrink);
-
-  // scoreText.setText('leftWallScale: ' + leftWallScale);
-
-  // rightWallScale -= .0005;
-  // rightWall.x -= .55;
-  // rightWall.y += .27;
-  // if (rightWallScale < .275) {
-  //   rightWallScale = 1;
-  //   rightWall.x = 1500;
-  //   rightWall.y = -257;
-  // }
-  // rightWall.setScale(rightWallScale, rightWallScale);
-
-  // leftWallScale -= leftWallShrink;
-  // leftWall.x += leftWallShrink * 1900;
-  // leftWall.y += leftWallShrink * 1650;
-  // leftWallShrink -= leftWallScaleDrag;
-  // //console.log(leftWallScale);
-
-  // if (leftWallScale < .17) {
-  //   leftWallScale = 1;
-  //   leftWall.x = -1473;
-  //   leftWall.y = -1340;
-  //   leftWallShrink = .005;
-  // }
-  // leftWall.setScale(leftWallScale, leftWallScale);
 }
 
 function showLoader(game) {

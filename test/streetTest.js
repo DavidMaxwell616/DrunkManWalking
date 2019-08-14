@@ -64,7 +64,9 @@ function create() {
     scale: .23,
     x: -10,
     y: -70,
-    ease: 'Linear.easeOut',
+    ease: function (k) {
+      return k * (2 - k)
+    },
     repeat: -1,
     yoyo: false,
     duration: 4500,
@@ -75,7 +77,9 @@ function create() {
     scale: .15,
     x: 452,
     y: 70,
-    ease: 'Linear.easeOut',
+    ease: function (k) {
+      return k * (2 - k)
+    },
     repeat: -1,
     yoyo: false,
     duration: 4500,

@@ -17,15 +17,69 @@ function create() {
   let centerX = this.game.config.width / 2;
   let centerY = this.game.config.height / 2;
 
-  street = this.add.sprite(840, 500, 'street1');
-  leftWall = this.add.sprite(-500, -267, 'leftWall1');
-  rightWall = this.add.sprite(1500, -257, 'rightWall1');
+  this.add.image(420, 250, 'walls').setScale(2);
+  street = this.add.image(-734, 315, 'street').setOrigin(0, 0);
+  street.setScale(1, 1);
+  streetTween = this.tweens.add({
+    targets: street,
+    scale: .64,
+    x: -309,
+    y: 308,
+    ease: 'Linear',
+    repeat: -1,
+    paused: true,
+    yoyo: false,
+    duration: 2500,
+  });
+
+  leftWall = this.add.sprite(-1473, -1340, 'leftWall').setOrigin(0, 0).setScale(1, 1);
+  leftWallTween = this.tweens.add({
+    targets: leftWall,
+    scale: .07,
+    x: 296,
+    y: 190,
+    ease: function (t) {
+      return Math.pow(Math.sin(t * 1), 1);
+    },
+    repeat: -1,
+    yoyo: false,
+    paused: true,
+    duration: 7500,
+  });
+
+  rightWall = this.add.sprite(456, -1226, 'rightWall').setOrigin(0, 0).setScale(1, 1);
+  rightWallTween = this.tweens.add({
+    targets: rightWall,
+    scale: .065,
+    x: 450,
+    y: 195,
+    ease: function (t) {
+      console.log('x: ' + Math.floor(rightWall.x), 'y: ' + Math.floor(rightWall.y),
+        'scale: ' + rightWall.scale);
+      return Math.pow(Math.sin(t * 1), 1);
+    },
+    paused: true,
+    repeat: -1,
+    yoyo: false,
+    duration: 7500,
+  });
+
+  this.add.image(320, 210, 'buildings').setOrigin(0, 0).setScale(.5);
 
   DrawShadows(this);
 
-  awning = this.add.sprite(centerX + 120, centerY + 40, 'awning');
-  awningShrink = .3;
-  awning.setScale(.3);
+  awning = this.add.sprite(centerX + 120, centerY + 40, 'awning').setScale(.3, .3);
+  awningTween = this.tweens.add({
+    targets: awning,
+    scale: 0,
+    x: centerX - 50,
+    y: centerY + 55,
+    ease: 'Quad.easeOut',
+    paused: true,
+    repeat: 0,
+    yoyo: false,
+    duration: 20000,
+  });
 
   head = this.add.image(0, -130, 'head');
   head2 = this.add.image(0, -130, 'head');
@@ -51,10 +105,10 @@ function create() {
   start.name = 'start';
   start.setInteractive();
   this.input.on('gameobjectdown', onObjectClicked);
-  drunkardWalking = this.add.container(centerX, centerY + 100, [body, legs, head, leftArm, rightArm, bottle]);
+  drunkardWalking = this.add.container(centerX - 40, centerY + 100, [body, legs, head, leftArm, rightArm, bottle]);
   drunkardWalking.setSize(64, 64);
   drunkardWalking.visible = false;
-  drunkardStanding = this.add.container(centerX, centerY + 100, [bodyandlegs, head2, leftArm2, rightArm2, start, bottle2]);
+  drunkardStanding = this.add.container(centerX - 40, centerY + 100, [bodyandlegs, head2, leftArm2, rightArm2, start, bottle2]);
   drunkardStanding.setSize(64, 64);
 
   scoreText = this.add.text(16, 16, 'Score: 0', {
@@ -128,10 +182,10 @@ function DrawShadows(game) {
 
   //left wall shadow
 
-  shadowOffsetLeft = 220;
+  shadowOffsetLeft = 320;
   shadowOffsetRight = 330;
-  shadowOffsetUp = 397;
-  shadowOffsetDown = 130;
+  shadowOffsetUp = 270;
+  shadowOffsetDown = 100;
 
   grd = ctx.createLinearGradient(
     centerX - shadowOffsetLeft,
@@ -145,7 +199,7 @@ function DrawShadows(game) {
   ctx.fillStyle = grd;
 
   ctx.beginPath();
-  ctx.moveTo(centerX + 3, centerY);
+  ctx.moveTo(centerX, centerY);
   ctx.lineTo(
     centerX - shadowOffsetLeft,
     centerY - shadowOffsetUp,
@@ -161,7 +215,7 @@ function DrawShadows(game) {
 
   shadowOffsetLeft = 220;
   shadowOffsetRight = 530;
-  shadowOffsetUp = 490;
+  shadowOffsetUp = 495;
   shadowOffsetDown = 100;
   centerX = this.game.config.width / 2;
 
@@ -188,10 +242,11 @@ function update() {
     return;
   drunkardStanding.visible = false;
   drunkardWalking.visible = true;
-  street.anims.play('streetMove', true);
+  streetTween.resume();
+  awningTween.resume();
+  leftWallTween.resume();
+  rightWallTween.resume();
   legs.anims.play('walk', true);
-  //leftWall.anims.play('leftWallMove', true);
-  //rightWall.play('rightWallMove');
   stagger(this.input.x);
 }
 
@@ -206,32 +261,6 @@ function stagger(mouseX) {
       wobble = 3;
       fluctuation = 0.25;
     }
-    awning.alpha -= .0005;
-    awningShrink -= .0002;
-    awning.x -= .1;
-    if (awning.alpha < 0)
-      awning.visible = false;
-    awning.setScale(awningShrink, awningShrink);
-
-    rightWallScale -= .0005;
-    rightWall.x -= .55;
-    rightWall.y += .27;
-    if (rightWallScale < .275) {
-      rightWallScale = 1;
-      rightWall.x = 1500;
-      rightWall.y = -257;
-    }
-    rightWall.setScale(rightWallScale, rightWallScale);
-
-    leftWallScale -= .0007;
-    leftWall.x += .65;
-    leftWall.y += .4;
-    if (leftWallScale < .19) {
-      leftWallScale = 1;
-      leftWall.x = -500;
-      leftWall.y = -267;
-    }
-    leftWall.setScale(leftWallScale, leftWallScale);
 
     score++;
 
@@ -247,7 +276,7 @@ function stagger(mouseX) {
     head.rotation = drunkardWalking.rotation * -1;
     rightArm.rotation = drunkardWalking.rotation * 2;
     legs.rotation = drunkardWalking.rotation / 2 * -1;
-    drunkardWalking.x = centerX + drunkardWalking.rotation;
+    drunkardWalking.x = centerX - 40 + drunkardWalking.rotation;
     if (drunkardWalking.rotation > .5 || drunkardWalking.rotation < -.5) {
       drunkardWalking.visible = false;
       falling.x = drunkardWalking.x;
@@ -258,8 +287,10 @@ function stagger(mouseX) {
         falling.setScale(1, 1);
       falling.visible = true;
       falling.play('falling');
-      street.anims.stop();
-      leftWall.anims.stop();
+      streetTween.pause();
+      awningTween.pause();
+      leftWallTween.pause();
+      rightWallTween.pause();
       gameOverText.visible = true;
       if (score > highScore)
         highScore = score;

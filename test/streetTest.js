@@ -25,18 +25,16 @@ let rightWallTween;
 function preload() {
   showLoader(this);
 
-  var walls = this.load.image('walls', '../assets/images/walls.svg');
   this.load.path = '../assets/images/street/';
 
   this.load.image('street', '1.svg');
 
-  this.load.path = '../assets/images/leftWall/';
-  this.load.image('leftWall1', '1.svg');
-  this.load.path = '../assets/images/rightWall/';
-  this.load.image('rightWall1', '1.svg');
-
   this.load.path = '../assets/images/';
   this.load.image('awning', 'awning.png');
+  this.load.image('leftWall', 'leftWall.svg');
+  this.load.image('rightWall', 'rightWall.svg');
+  this.load.image('buildings', 'buildings.svg');
+  this.load.image('walls', 'walls.svg');
 
 }
 
@@ -58,33 +56,37 @@ function create() {
     duration: 2500,
   });
 
-  leftWall = this.add.sprite(-1473, -1340, 'leftWall1').setOrigin(0, 0).setScale(1, 1);
+  leftWall = this.add.sprite(-1473, -1340, 'leftWall').setOrigin(0, 0).setScale(1, 1);
   leftWallTween = this.tweens.add({
     targets: leftWall,
-    scale: .23,
-    x: -10,
-    y: -75,
-    ease: function (k) {
-      return k * (2 - k)
+    scale: .07,
+    x: 296,
+    y: 190,
+    ease: function (t) {
+      return Math.pow(Math.sin(t * 1), 1);
     },
     repeat: -1,
     yoyo: false,
-    duration: 4500,
+    duration: 7500,
   });
 
-  rightWall = this.add.sprite(456, -1225, 'rightWall1').setOrigin(0, 0).setScale(1, 1);
+  rightWall = this.add.sprite(456, -1226, 'rightWall').setOrigin(0, 0).setScale(1, 1);
   rightWallTween = this.tweens.add({
     targets: rightWall,
-    scale: .15,
-    x: 452,
-    y: 75,
-    ease: function (k) {
-      return k * (2 - k)
+    scale: .065,
+    x: 450,
+    y: 195,
+    ease: function (t) {
+      console.log('x: ' + Math.floor(rightWall.x), 'y: ' + Math.floor(rightWall.y),
+        'scale: ' + rightWall.scale);
+      return Math.pow(Math.sin(t * 1), 1);
     },
     repeat: -1,
     yoyo: false,
-    duration: 4500,
+    duration: 7500,
   });
+
+  const buildings = this.add.image(320, 210, 'buildings').setOrigin(0, 0).setScale(.5);
 
   DrawShadows(this);
 
@@ -92,12 +94,12 @@ function create() {
   awningTween = this.tweens.add({
     targets: awning,
     scale: 0,
-    x: centerX - 30,
-    y: centerY + 45,
-    ease: 'Linear.easeOut',
+    x: centerX - 50,
+    y: centerY + 55,
+    ease: 'Quad.easeOut',
     repeat: 0,
     yoyo: false,
-    duration: 4500,
+    duration: 20000,
   });
 
   scoreText = this.add.text(16, 16, 'Score: 0', {
@@ -155,8 +157,8 @@ function DrawShadows(game) {
 
   shadowOffsetLeft = 320;
   shadowOffsetRight = 330;
-  shadowOffsetUp = 320;
-  shadowOffsetDown = 130;
+  shadowOffsetUp = 270;
+  shadowOffsetDown = 100;
 
   grd = ctx.createLinearGradient(
     centerX - shadowOffsetLeft,

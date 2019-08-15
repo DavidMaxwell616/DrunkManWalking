@@ -1,28 +1,6 @@
 function preload() {
   showLoader(this);
-  this.load.image('walls', '../assets/images/walls.png');
-  this.load.animation('streetMove', '../assets/json/animations.json');
   this.load.animation('falling', '../assets/json/animations.json');
-  //  this.load.animation('leftWallMove', '../assets/json/animations.json');
-  //  this.load.animation('rightWallMove', '../assets/json/animations.json');
-  this.load.path = '../assets/images/street/';
-  for (let index = 1; index < 51; index++) {
-    this.load.image('street' + index, index + '.svg');
-  }
-
-  this.load.path = '../assets/images/leftWall/';
-  this.load.image('leftWall1', '1.svg');
-  this.load.path = '../assets/images/rightWall/';
-  this.load.image('rightWall1', '1.svg');
-
-  // this.load.path = '../assets/images/leftWall/';
-  // for (let index = 1; index < 201; index++) {
-  //   this.load.image('leftWall' + index, index + '.svg');
-  // }
-  // this.load.path = '../assets/images/rightWall/';
-  // for (let index = 1; index < 201; index++) {
-  //   this.load.image('rightWall' + index, index + '.svg');
-  // }
 
   this.scale.pageAlignHorizontally = true;
   this.scale.pageAlignVertically = true;
@@ -32,11 +10,15 @@ function preload() {
   this.load.path = '../assets/images/';
   this.load.image('maxxdaddy', 'maxxdaddy.gif');
   this.load.image('background', 'background.png');
-  this.load.image('walls', 'walls.png');
+  this.load.image('walls', 'walls.svg');
   this.load.image('leftWall', 'left wall.png');
   this.load.image('rightWall', 'right wall.png');
   this.load.image('awning', 'awning.png');
   this.load.image('start', 'start.png');
+  this.load.image('leftWall', 'leftWall.svg');
+  this.load.image('rightWall', 'rightWall.svg');
+  this.load.image('buildings', 'buildings.svg');
+  this.load.image('street', 'street.svg');
 
   this.load.spritesheet('legs', 'legsStrip.png', {
     frameWidth: 250,

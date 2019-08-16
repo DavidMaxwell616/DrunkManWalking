@@ -36,3 +36,8 @@ let streetTween;
 let awningTween;
 let leftWallTween;
 let rightWallTween;
+let timeToDrink;
+let drinkCount = 0;
+let drinking = false;
+let drunkX = 0;
+let wobbleThreshold = 3;

@@ -31,6 +31,9 @@ function preload() {
   this.load.image('rightArm', 'rightArm.png');
   this.load.image('rightArm2', 'rightArm3.png');
   this.load.image('bottle', 'bottle.png');
+  this.load.image('drinking', 'bottle_drinking.png');
+  this.load.image('startover', 'startover.png');
+
   this.load.path = '../assets/images/falling/';
   for (let index = 1; index < 9; index++) {
     this.load.image('falling' + index, 'falling' + index + '.png');

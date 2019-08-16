@@ -54,8 +54,8 @@ function create() {
     x: 450,
     y: 195,
     ease: function (t) {
-      console.log('x: ' + Math.floor(rightWall.x), 'y: ' + Math.floor(rightWall.y),
-        'scale: ' + rightWall.scale);
+      // console.log('x: ' + Math.floor(rightWall.x), 'y: ' + Math.floor(rightWall.y),
+      //   'scale: ' + rightWall.scale);
       return Math.pow(Math.sin(t * 1), 1);
     },
     paused: true,
@@ -64,7 +64,7 @@ function create() {
     duration: 7500,
   });
 
-  this.add.image(320, 210, 'buildings').setOrigin(0, 0).setScale(.5);
+  //  this.add.image(320, 210, 'buildings').setOrigin(0, 0).setScale(.5);
 
   DrawShadows(this);
 
@@ -83,14 +83,19 @@ function create() {
 
   head = this.add.image(0, -130, 'head');
   head2 = this.add.image(0, -130, 'head');
+  head3 = this.add.image(0, -130, 'head');
   leftArm = this.add.image(40, -70, 'leftArm');
   leftArm2 = this.add.image(40, -70, 'leftArm');
   bottle = this.add.image(70, -50, 'bottle');
   bottle2 = this.add.image(70, -50, 'bottle');
+  drinking = this.add.image(20, -105, 'drinking');
   rightArm = this.add.image(-25, -95, 'rightArm').setOrigin(1, 0);
   rightArm2 = this.add.image(-25, -95, 'rightArm2').setOrigin(1, 0);
+  rightArm3 = this.add.image(-25, -95, 'rightArm2').setOrigin(1, 0);
   body = this.add.image(-10, -70, 'body');
   legs = this.add.sprite(-10, 30, 'legs');
+  body2 = this.add.image(-10, -70, 'body');
+  legs2 = this.add.sprite(-10, 30, 'legs');
   bodyandlegs = this.add.image(-10, -10, 'body&legs');
   this.anims.create({
     key: 'walk',
@@ -105,11 +110,19 @@ function create() {
   start.name = 'start';
   start.setInteractive();
   this.input.on('gameobjectdown', onObjectClicked);
-  drunkardWalking = this.add.container(centerX - 40, centerY + 100, [body, legs, head, leftArm, rightArm, bottle]);
+  drunkX = centerX - 40;
+  drunkardWalking = this.add.container(drunkX, centerY + 100, [body, legs, head, leftArm, rightArm, bottle]);
   drunkardWalking.setSize(64, 64);
   drunkardWalking.visible = false;
-  drunkardStanding = this.add.container(centerX - 40, centerY + 100, [bodyandlegs, head2, leftArm2, rightArm2, start, bottle2]);
+  drunkardDrinking = this.add.container(drunkX, centerY + 100, [body2, legs2, head3, rightArm3, drinking]);
+  drunkardDrinking.setSize(64, 64);
+  drunkardDrinking.visible = false;
+  drunkardStanding = this.add.container(drunkX, centerY + 100, [bodyandlegs, head2, leftArm2, rightArm2, start, bottle2]);
   drunkardStanding.setSize(64, 64);
+  startover = this.add.image(800, 350, 'startover');
+  startover.visible = false;
+  startover.name = 'startover';
+  startover.setInteractive();
 
   scoreText = this.add.text(16, 16, 'Score: 0', {
     fontFamily: 'arial',
@@ -255,10 +268,12 @@ function stagger(mouseX) {
   let centerX = this.game.config.width / 2;
 
   if (standing) {
+    timeToDrink = Math.floor(Math.random() * 1000);
+
     randomizer = Math.floor(Math.random() * 4);
     wobble -= 0.5;
-    if (wobble < 3) {
-      wobble = 3;
+    if (wobble < wobbleThreshold) {
+      wobble = wobbleThreshold;
       fluctuation = 0.25;
     }
 
@@ -269,7 +284,22 @@ function stagger(mouseX) {
     if (corrector > randomizer)
       corrector -= .1;
     factor = mouseX / 40 - 10 + rotation / wobble;
-
+    if (timeToDrink == 999 && !drinking) {
+      drunkardWalking.visible = false;
+      drunkardDrinking.visible = true;
+      drinking = true;
+    }
+    if (drinking) {
+      drinkCount++;
+      console.log(drinkCount)
+      if (drinkCount > 100) {
+        drunkardDrinking.visible = false;
+        drunkardWalking.visible = true;
+        drinking = false;
+        wobbleThreshold += .2;
+        drinkCount = 0;
+      }
+    }
     rotation += (rotation + factor + corrector) / 1000; // * fluctuation;
     drunkardWalking.rotation = rotation;
     scoreText.setText('score: ' + score);
@@ -279,12 +309,14 @@ function stagger(mouseX) {
     drunkardWalking.x = centerX - 40 + drunkardWalking.rotation;
     if (drunkardWalking.rotation > .5 || drunkardWalking.rotation < -.5) {
       drunkardWalking.visible = false;
-      falling.x = drunkardWalking.x;
       falling.y = drunkardWalking.y;
-      if (drunkardWalking.rotation > .5)
+      if (drunkardWalking.rotation > .5) {
         falling.setScale(-1, 1);
-      else
+        falling.x = drunkardWalking.x + 50;
+      } else {
         falling.setScale(1, 1);
+        falling.x = drunkardWalking.x - 50;
+      }
       falling.visible = true;
       falling.play('falling');
       streetTween.pause();
@@ -295,7 +327,7 @@ function stagger(mouseX) {
       if (score > highScore)
         highScore = score;
       gameOverText.setText('GAME OVER\nYour Score: ' + score + '\nHigh Score: ' + highScore);
-
+      startover.visible = true;
       rotation = 0;
       standing = false;
       walking = false;

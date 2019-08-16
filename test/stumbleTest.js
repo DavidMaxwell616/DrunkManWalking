@@ -30,6 +30,7 @@ let score = 0;
 let drunkard;
 let scoreText;
 let falling;
+let drunkardDrinking;
 
 function preload() {
   this.load.spritesheet('legs', '../assets/images/legsStrip.png', {
@@ -41,6 +42,7 @@ function preload() {
   this.load.image('leftArm', '../assets/images/leftArm.png');
   this.load.image('rightArm', '../assets/images/rightArm.png');
   this.load.image('bottle', '../assets/images/bottle.png');
+  this.load.image('drinking', '../assets/images/bottle drinking.png');
   this.load.animation('falling', '../assets/json/animations.json');
   this.load.path = '../assets/images/falling/';
   for (let index = 1; index < 9; index++) {
@@ -54,6 +56,7 @@ function create() {
   head = this.add.image(0, -130, 'head');
   leftArm = this.add.image(40, -70, 'leftArm');
   bottle = this.add.image(70, -50, 'bottle');
+  drinking = this.add.image(70, -50, 'drinking');
   rightArm = this.add.image(-25, -90, 'rightArm').setOrigin(1, 0);
   body = this.add.image(-10, -70, 'body');
   legs = this.add.sprite(-10, 30, 'legs');
@@ -67,6 +70,9 @@ function create() {
     repeat: -1
   });
   drunkard = this.add.container(centerX, centerY, [body, legs, head, leftArm, rightArm, bottle]);
+  drunkardDrinking = this.add.container(centerX, centerY, [body, legs, head, leftArm, rightArm, drinking]);
+  drunkardDrinking.visible = false;
+
   scoreText = this.add.text(16, 16, 'score: 0', {
     fontFamily: 'arial',
     fontSize: '64px',

@@ -12,10 +12,10 @@ var config = {
 };
 
 var game = new Phaser.Game(config);
+let centerX = this.game.config.width / 2;
+let centerY = this.game.config.height / 2;
 
 function create() {
-  let centerX = this.game.config.width / 2;
-  let centerY = this.game.config.height / 2;
 
   this.add.image(420, 250, 'walls').setScale(2);
   street = this.add.image(-734, 315, 'street').setOrigin(0, 0);
@@ -86,16 +86,18 @@ function create() {
   head3 = this.add.image(0, -130, 'head');
   leftArm = this.add.image(40, -70, 'leftArm');
   leftArm2 = this.add.image(40, -70, 'leftArm');
+  leftArm.name = "leftArm";
+  leftArm3 = this.add.image(20, -105, 'drinking');
+  leftArm3.name = "drinking";
   bottle = this.add.image(70, -50, 'bottle');
+  bottle.name = "bottle";
   bottle2 = this.add.image(70, -50, 'bottle');
-  drinking = this.add.image(20, -105, 'drinking');
   rightArm = this.add.image(-25, -95, 'rightArm').setOrigin(1, 0);
   rightArm2 = this.add.image(-25, -95, 'rightArm2').setOrigin(1, 0);
-  rightArm3 = this.add.image(-25, -95, 'rightArm2').setOrigin(1, 0);
+  rightArm3 = this.add.image(-25, -95, 'rightArm').setOrigin(1, 0);
   body = this.add.image(-10, -70, 'body');
   legs = this.add.sprite(-10, 30, 'legs');
   body2 = this.add.image(-10, -70, 'body');
-  legs2 = this.add.sprite(-10, 30, 'legs');
   bodyandlegs = this.add.image(-10, -10, 'body&legs');
   this.anims.create({
     key: 'walk',
@@ -111,12 +113,11 @@ function create() {
   start.setInteractive();
   this.input.on('gameobjectdown', onObjectClicked);
   drunkX = centerX - 40;
-  drunkardWalking = this.add.container(drunkX, centerY + 100, [body, legs, head, leftArm, rightArm, bottle]);
+  drunkardWalking = this.add.container(drunkX, centerY + 100, [body, legs, head, leftArm, rightArm, bottle, leftArm3]);
   drunkardWalking.setSize(64, 64);
+  var child = drunkardWalking.getByName('drinking');
+  child.visible = false;
   drunkardWalking.visible = false;
-  drunkardDrinking = this.add.container(drunkX, centerY + 100, [body2, legs2, head3, rightArm3, drinking]);
-  drunkardDrinking.setSize(64, 64);
-  drunkardDrinking.visible = false;
   drunkardStanding = this.add.container(drunkX, centerY + 100, [bodyandlegs, head2, leftArm2, rightArm2, start, bottle2]);
   drunkardStanding.setSize(64, 64);
   startover = this.add.image(800, 350, 'startover');
@@ -148,6 +149,28 @@ function create() {
 function onObjectClicked(pointer, gameObject) {
   if (gameObject.name == 'start')
     walking = true;
+  else if (gameObject.name == 'startover') {
+    walking = true;
+    drunkardStanding.visible = false;
+    drunkardWalking.visible = true;
+    streetTween.resume();
+    leftWallTween.resume();
+    rightWallTween.resume();
+    legs.anims.play('walk', true);
+    falling.visible = false;
+    gameOverText.visible = false;
+    wobbleThreshold = 3;
+    startover.visible = false;
+    standing = true;
+    corrector = 0;
+    randomizer = 0;
+    factor = 0;
+    rotation = 0;
+    guyRotation = 0;
+    wobble = 10;
+    fluctuation = 1;
+    score = 0;
+  }
 }
 
 function DrawShadows(game) {
@@ -284,25 +307,27 @@ function stagger(mouseX) {
     if (corrector > randomizer)
       corrector -= .1;
     factor = mouseX / 40 - 10 + rotation / wobble;
-    if (timeToDrink == 999 && !drinking) {
-      drunkardWalking.visible = false;
-      drunkardDrinking.visible = true;
+
+    if (timeToDrink > 990 && !drinking) {
+      drunkardWalking.getByName('drinking').setVisible(true);
+      drunkardWalking.getByName('leftArm').setVisible(false);
+      drunkardWalking.getByName('bottle').setVisible(false);
       drinking = true;
     }
     if (drinking) {
       drinkCount++;
-      console.log(drinkCount)
       if (drinkCount > 100) {
-        drunkardDrinking.visible = false;
-        drunkardWalking.visible = true;
+        drunkardWalking.getByName('drinking').setVisible(false);
+        drunkardWalking.getByName('leftArm').setVisible(true);
+        drunkardWalking.getByName('bottle').setVisible(true);
         drinking = false;
-        wobbleThreshold += .2;
+        wobbleThreshold += 1;
         drinkCount = 0;
       }
     }
     rotation += (rotation + factor + corrector) / 1000; // * fluctuation;
     drunkardWalking.rotation = rotation;
-    scoreText.setText('score: ' + score);
+    scoreText.setText('Score: ' + score);
     head.rotation = drunkardWalking.rotation * -1;
     rightArm.rotation = drunkardWalking.rotation * 2;
     legs.rotation = drunkardWalking.rotation / 2 * -1;

@@ -27,7 +27,6 @@ function preload() {
 
   this.load.path = '../assets/images/street/';
 
-  this.load.image('street', '1.svg');
 
   this.load.path = '../assets/images/';
   this.load.image('awning', 'awning.png');
@@ -35,14 +34,14 @@ function preload() {
   this.load.image('rightWall', 'rightWall.svg');
   this.load.image('buildings', 'buildings.svg');
   this.load.image('walls', 'walls.svg');
+  this.load.image('street', 'street.svg');
+
 
 }
 
 function create() {
   const walls = this.add.image(420, 250, 'walls');
   walls.setScale(2);
-  const centerX = this.game.config.width / 2;
-  const centerY = this.game.config.height / 2;
   street = this.add.image(-734, 315, 'street').setOrigin(0, 0);
   street.setScale(1, 1);
   streetTween = this.tweens.add({
@@ -70,15 +69,13 @@ function create() {
     duration: 7500,
   });
 
-  rightWall = this.add.sprite(456, -1226, 'rightWall').setOrigin(0, 0).setScale(1, 1);
+  rightWall = this.add.sprite(456, -1222, 'rightWall').setOrigin(0, 0).setScale(1, 1);
   rightWallTween = this.tweens.add({
     targets: rightWall,
     scale: .065,
     x: 450,
-    y: 195,
+    y: 197,
     ease: function (t) {
-      console.log('x: ' + Math.floor(rightWall.x), 'y: ' + Math.floor(rightWall.y),
-        'scale: ' + rightWall.scale);
       return Math.pow(Math.sin(t * 1), 1);
     },
     repeat: -1,
@@ -86,21 +83,21 @@ function create() {
     duration: 7500,
   });
 
-  const buildings = this.add.image(320, 210, 'buildings').setOrigin(0, 0).setScale(.5);
+  //const buildings = this.add.image(320, 210, 'buildings').setOrigin(0, 0).setScale(.5);
 
   DrawShadows(this);
 
-  awning = this.add.sprite(centerX + 120, centerY + 40, 'awning').setScale(.3, .3);
-  awningTween = this.tweens.add({
-    targets: awning,
-    scale: 0,
-    x: centerX - 50,
-    y: centerY + 55,
-    ease: 'Quad.easeOut',
-    repeat: 0,
-    yoyo: false,
-    duration: 20000,
-  });
+  // awning = this.add.sprite(centerX + 120, centerY + 40, 'awning').setScale(.3, .3);
+  // awningTween = this.tweens.add({
+  //   targets: awning,
+  //   scale: 0,
+  //   x: centerX - 50,
+  //   y: centerY + 55,
+  //   ease: 'Quad.easeOut',
+  //   repeat: 0,
+  //   yoyo: false,
+  //   duration: 20000,
+  // });
 
   scoreText = this.add.text(16, 16, 'Score: 0', {
     fontFamily: 'arial',

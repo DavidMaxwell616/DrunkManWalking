@@ -26,8 +26,8 @@ function create() {
     x: -309,
     y: 308,
     ease: 'Linear',
-    repeat: -1,
     paused: true,
+    repeat: -1,
     yoyo: false,
     duration: 2500,
   });
@@ -47,19 +47,17 @@ function create() {
     duration: 7500,
   });
 
-  rightWall = this.add.sprite(456, -1226, 'rightWall').setOrigin(0, 0).setScale(1, 1);
+  rightWall = this.add.sprite(456, -1220, 'rightWall').setOrigin(0, 0).setScale(1, 1);
   rightWallTween = this.tweens.add({
     targets: rightWall,
     scale: .065,
     x: 450,
-    y: 195,
+    y: 200,
     ease: function (t) {
-      // console.log('x: ' + Math.floor(rightWall.x), 'y: ' + Math.floor(rightWall.y),
-      //   'scale: ' + rightWall.scale);
       return Math.pow(Math.sin(t * 1), 1);
     },
-    paused: true,
     repeat: -1,
+    paused: true,
     yoyo: false,
     duration: 7500,
   });
@@ -75,9 +73,9 @@ function create() {
     x: centerX - 50,
     y: centerY + 55,
     ease: 'Quad.easeOut',
-    paused: true,
     repeat: 0,
     yoyo: false,
+    paused: true,
     duration: 20000,
   });
 
@@ -120,6 +118,8 @@ function create() {
   drunkardWalking.visible = false;
   drunkardStanding = this.add.container(drunkX, centerY + 100, [bodyandlegs, head2, leftArm2, rightArm2, start, bottle2]);
   drunkardStanding.setSize(64, 64);
+  // drunkardStanding.visible = false;
+  // awning.visible = false;
   startover = this.add.image(800, 350, 'startover');
   startover.visible = false;
   startover.name = 'startover';
@@ -278,11 +278,13 @@ function update() {
     return;
   drunkardStanding.visible = false;
   drunkardWalking.visible = true;
-  streetTween.resume();
-  awningTween.resume();
-  leftWallTween.resume();
-  rightWallTween.resume();
-  legs.anims.play('walk', true);
+  if (streetTween.paused) {
+    streetTween.resume();
+    awningTween.resume();
+    leftWallTween.resume();
+    rightWallTween.resume();
+    legs.anims.play('walk', true);
+  }
   stagger(this.input.x);
 }
 
@@ -295,13 +297,14 @@ function stagger(mouseX) {
 
     randomizer = Math.floor(Math.random() * 4);
     wobble -= 0.5;
-    if (wobble < wobbleThreshold) {
-      wobble = wobbleThreshold;
+    if (wobble < 3) {
+      wobble = 3;
       fluctuation = 0.25;
     }
 
-    score++;
-
+    score += .1;
+    if (Math.floor(score) % 20 == 0)
+      wobbleThreshold += 10;
     if (corrector < randomizer)
       corrector += .1;
     if (corrector > randomizer)
@@ -321,13 +324,14 @@ function stagger(mouseX) {
         drunkardWalking.getByName('leftArm').setVisible(true);
         drunkardWalking.getByName('bottle').setVisible(true);
         drinking = false;
-        wobbleThreshold += 1;
+        if (wobbleThreshold > 0)
+          wobbleThreshold -= 25;
         drinkCount = 0;
       }
     }
-    rotation += (rotation + factor + corrector) / 1000; // * fluctuation;
+    rotation += (rotation + factor + corrector) / wobbleThreshold; // * fluctuation;
     drunkardWalking.rotation = rotation;
-    scoreText.setText('Score: ' + score);
+    scoreText.setText('score: ' + Math.floor(score));
     head.rotation = drunkardWalking.rotation * -1;
     rightArm.rotation = drunkardWalking.rotation * 2;
     legs.rotation = drunkardWalking.rotation / 2 * -1;
@@ -349,6 +353,7 @@ function stagger(mouseX) {
       leftWallTween.pause();
       rightWallTween.pause();
       gameOverText.visible = true;
+      score = Math.floor(score);
       if (score > highScore)
         highScore = score;
       gameOverText.setText('GAME OVER\nYour Score: ' + score + '\nHigh Score: ' + highScore);

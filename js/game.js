@@ -131,6 +131,12 @@ function create() {
     fontStyle: 'bold',
     fill: '#ff4500'
   });
+  buzzText = this.add.text(16, 46, 'Buzz: 0', {
+    fontFamily: 'arial',
+    fontSize: '32px',
+    fontStyle: 'bold',
+    fill: '#ff4500'
+  });
   gameOverText = this.add.text(centerX - 100, centerY - 100, 'GAME OVER\nYour Score: 0\nHigh Score: 0', {
     fontFamily: 'arial',
     fontSize: '32px',
@@ -159,7 +165,7 @@ function onObjectClicked(pointer, gameObject) {
     legs.anims.play('walk', true);
     falling.visible = false;
     gameOverText.visible = false;
-    wobbleThreshold = 3;
+    wobbleThreshold = 200;
     startover.visible = false;
     standing = true;
     corrector = 0;
@@ -167,7 +173,7 @@ function onObjectClicked(pointer, gameObject) {
     factor = 0;
     rotation = 0;
     guyRotation = 0;
-    wobble = 10;
+    wobble = 3;
     fluctuation = 1;
     score = 0;
   }
@@ -304,7 +310,7 @@ function stagger(mouseX) {
 
     score += .1;
     if (Math.floor(score) % 20 == 0)
-      wobbleThreshold += 10;
+      wobbleThreshold += 1;
     if (corrector < randomizer)
       corrector += .1;
     if (corrector > randomizer)
@@ -331,7 +337,9 @@ function stagger(mouseX) {
     }
     rotation += (rotation + factor + corrector) / wobbleThreshold; // * fluctuation;
     drunkardWalking.rotation = rotation;
+    buzz = (200 - wobbleThreshold) / 200 * 100;
     scoreText.setText('score: ' + Math.floor(score));
+    buzzText.setText('buzz: ' + Math.floor(buzz) + '%');
     head.rotation = drunkardWalking.rotation * -1;
     rightArm.rotation = drunkardWalking.rotation * 2;
     legs.rotation = drunkardWalking.rotation / 2 * -1;

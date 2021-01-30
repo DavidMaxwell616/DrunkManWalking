@@ -46,3 +46,7 @@ let timeToDrink;
 let drinkCount = 0;
 let drinking = false;
 let drunkX = 0;
+let leftArrow;
+let rightArrow;
+let arrowLean = 0;
+var localStorageName = "drunkmanwalking";

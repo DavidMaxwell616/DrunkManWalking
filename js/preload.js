@@ -19,8 +19,9 @@ function preload() {
   this.load.image('rightWall', 'rightWall.svg');
   this.load.image('buildings', 'buildings.svg');
   this.load.image('street', 'street.svg');
+  this.load.image('arrow', 'arrow.png');
 
-  this.load.spritesheet('legs', 'legsStrip.png', {
+  this.load.spritesheet('legs', 'legs/legsStrip.png', {
     frameWidth: 250,
     frameHeight: 150
   });

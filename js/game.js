@@ -97,6 +97,17 @@ function create() {
   legs = this.add.sprite(-10, 30, 'legs');
   body2 = this.add.image(-10, -70, 'body');
   bodyandlegs = this.add.image(-10, -10, 'body&legs');
+ 
+  rightArrow = this.add.image(800, 450, 'arrow');
+  rightArrow.name = 'rightArrow';
+  rightArrow.setInteractive();
+  rightArrow.setScale(.15);
+  leftArrow = this.add.image(100, 450, 'arrow');
+  leftArrow.name = 'leftArrow';
+  leftArrow.setInteractive();
+  leftArrow.setScale(.15);
+  leftArrow.setAngle(180);
+ 
   this.anims.create({
     key: 'walk',
     frames: this.anims.generateFrameNumbers('legs', {
@@ -144,6 +155,8 @@ function create() {
     fill: '#ff4500'
   });
   gameOverText.visible = false;
+  highScore = localStorage.getItem(localStorageName) == null ? 0 :
+  localStorage.getItem(localStorageName);
 
   falling = this.add.sprite(0, 0, 'falling1')
   falling.visible = false;
@@ -162,6 +175,9 @@ function onObjectClicked(pointer, gameObject) {
     streetTween.resume();
     leftWallTween.resume();
     rightWallTween.resume();
+    awning.setPosition(centerX + 120, centerY + 40).setScale(.3, .3);
+    awningTween.restart();
+    awningTween.play();
     legs.anims.play('walk', true);
     falling.visible = false;
     gameOverText.visible = false;
@@ -176,6 +192,14 @@ function onObjectClicked(pointer, gameObject) {
     wobble = 3;
     fluctuation = 1;
     score = 0;
+  }
+  else if (gameObject.name == 'leftArrow'){
+    if(walking)
+    arrowLean--;
+  }
+  else if (gameObject.name == 'rightArrow'){
+    if(walking)
+    arrowLean++;
   }
 }
 
@@ -291,7 +315,8 @@ function update() {
     rightWallTween.resume();
     legs.anims.play('walk', true);
   }
-  stagger(this.input.x);
+  let moveX = this.input.x+arrowLean;
+  stagger(moveX);
 }
 
 
@@ -362,6 +387,7 @@ function stagger(mouseX) {
       rightWallTween.pause();
       gameOverText.visible = true;
       score = Math.floor(score);
+      localStorage.setItem(localStorageName, highScore);
       if (score > highScore)
         highScore = score;
       gameOverText.setText('GAME OVER\nYour Score: ' + score + '\nHigh Score: ' + highScore);

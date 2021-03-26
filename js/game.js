@@ -66,7 +66,7 @@ function create() {
 
   DrawShadows(this);
 
-  awning = this.add.sprite(centerX + 120, centerY + 40, 'awning').setScale(.3, .3);
+  awning = this.add.sprite(centerX + 180, centerY + 40, 'awning').setScale(.3, .3);
   awningTween = this.tweens.add({
     targets: awning,
     scale: 0,
@@ -98,16 +98,27 @@ function create() {
   body2 = this.add.image(-10, -70, 'body');
   bodyandlegs = this.add.image(-10, -10, 'body&legs');
  
-  rightArrow = this.add.image(800, 450, 'arrow');
-  rightArrow.name = 'rightArrow';
-  rightArrow.setInteractive();
-  rightArrow.setScale(.15);
-  leftArrow = this.add.image(100, 450, 'arrow');
-  leftArrow.name = 'leftArrow';
-  leftArrow.setInteractive();
-  leftArrow.setScale(.15);
-  leftArrow.setAngle(180);
- 
+  touchBar = this.add.image(centerX, touchBarY, 'touchBar');
+  touchBar.name = 'touchBar';
+  touchBar.setScale(.5);
+  touchBarButton = this.add.image(centerX, touchBarY, 'touchBarButton');
+  touchBarButton.name = 'touchBarButton';
+  touchBarButton.setScale(.5);
+  touchBarButton.setInteractive({ draggable: true })
+  .on('dragstart', function(pointer, dragX, dragY){
+    buttonDrag = true;
+  })
+  .on('drag', function(pointer, dragX, dragY){
+    if(touchBarButton.x>touchBar.x-(touchBar.width*.25)+touchBarButton.width*.25 && 
+    touchBarButton.x<touchBar.x+(touchBar.width*.25)-touchBarButton.width*.25)  {
+      touchBarButton.setPosition(dragX, touchBarY);
+    }
+  })
+  .on('dragend', function(pointer, dragX, dragY, dropped){
+    buttonDrag = false;
+    touchBarButton.setPosition(centerX, touchBarY);
+  })
+
   this.anims.create({
     key: 'walk',
     frames: this.anims.generateFrameNumbers('legs', {
@@ -121,7 +132,7 @@ function create() {
   start.name = 'start';
   start.setInteractive();
   this.input.on('gameobjectdown', onObjectClicked);
-  drunkX = centerX - 40;
+  drunkX = centerX;
   drunkardWalking = this.add.container(drunkX, centerY + 100, [body, legs, head, leftArm, rightArm, bottle, leftArm3]);
   drunkardWalking.setSize(64, 64);
   var child = drunkardWalking.getByName('drinking');
@@ -175,7 +186,7 @@ function onObjectClicked(pointer, gameObject) {
     streetTween.resume();
     leftWallTween.resume();
     rightWallTween.resume();
-    awning.setPosition(centerX + 120, centerY + 40).setScale(.3, .3);
+    awning.setPosition(centerX + 180, centerY + 40).setScale(.3, .3);
     awningTween.restart();
     awningTween.play();
     legs.anims.play('walk', true);
@@ -193,14 +204,11 @@ function onObjectClicked(pointer, gameObject) {
     fluctuation = 1;
     score = 0;
   }
-  else if (gameObject.name == 'leftArrow'){
-    if(walking)
-    arrowLean--;
-  }
-  else if (gameObject.name == 'rightArrow'){
-    if(walking)
-    arrowLean++;
-  }
+}
+
+function Lean(x,y){
+leanForce = x - centerX;
+console.log(leanForce);
 }
 
 function DrawShadows(game) {
@@ -315,7 +323,7 @@ function update() {
     rightWallTween.resume();
     legs.anims.play('walk', true);
   }
-  let moveX = this.input.x+arrowLean;
+  let moveX = this.input.x+Lean;
   stagger(moveX);
 }
 

@@ -91,34 +91,13 @@ function create() {
   bottle.name = "bottle";
   bottle2 = this.add.image(70, -50, 'bottle');
   rightArm = this.add.image(-25, -95, 'rightArm').setOrigin(1, 0);
-  rightArm2 = this.add.image(-25, -95, 'rightArm2').setOrigin(1, 0);
+  rightArm2 = this.add.image(-25, -95, 'rightArm2').setOrigin(1, 0);  
   rightArm3 = this.add.image(-25, -95, 'rightArm').setOrigin(1, 0);
   body = this.add.image(-10, -70, 'body');
   legs = this.add.sprite(-10, 30, 'legs');
   body2 = this.add.image(-10, -70, 'body');
   bodyandlegs = this.add.image(-10, -10, 'body&legs');
  
-  touchBar = this.add.image(centerX, touchBarY, 'touchBar');
-  touchBar.name = 'touchBar';
-  touchBar.setScale(.5);
-  touchBarButton = this.add.image(centerX, touchBarY, 'touchBarButton');
-  touchBarButton.name = 'touchBarButton';
-  touchBarButton.setScale(.5);
-  touchBarButton.setInteractive({ draggable: true })
-  .on('dragstart', function(pointer, dragX, dragY){
-    buttonDrag = true;
-  })
-  .on('drag', function(pointer, dragX, dragY){
-    if(touchBarButton.x>touchBar.x-(touchBar.width*.25)+touchBarButton.width*.25 && 
-    touchBarButton.x<touchBar.x+(touchBar.width*.25)-touchBarButton.width*.25)  {
-      touchBarButton.setPosition(dragX, touchBarY);
-    }
-  })
-  .on('dragend', function(pointer, dragX, dragY, dropped){
-    buttonDrag = false;
-    touchBarButton.setPosition(centerX, touchBarY);
-  })
-
   this.anims.create({
     key: 'walk',
     frames: this.anims.generateFrameNumbers('legs', {
@@ -203,12 +182,8 @@ function onObjectClicked(pointer, gameObject) {
     wobble = 3;
     fluctuation = 1;
     score = 0;
+    gracePeriod=100;
   }
-}
-
-function Lean(x,y){
-leanForce = x - centerX;
-console.log(leanForce);
 }
 
 function DrawShadows(game) {
@@ -323,9 +298,12 @@ function update() {
     rightWallTween.resume();
     legs.anims.play('walk', true);
   }
-  let moveX = this.input.x+Lean;
-  stagger(moveX);
-}
+  // let moveX = this.input.x+Lean;
+  // stagger(moveX);
+  if(gracePeriod==0)
+    stagger(this.input.x);
+   else gracePeriod--;  
+ }
 
 
 function stagger(mouseX) {
@@ -349,7 +327,7 @@ function stagger(mouseX) {
     if (corrector > randomizer)
       corrector -= .1;
     factor = mouseX / 40 - 10 + rotation / wobble;
-
+ 
     if (timeToDrink > 990 && !drinking) {
       drunkardWalking.getByName('drinking').setVisible(true);
       drunkardWalking.getByName('leftArm').setVisible(false);
@@ -376,7 +354,7 @@ function stagger(mouseX) {
     head.rotation = drunkardWalking.rotation * -1;
     rightArm.rotation = drunkardWalking.rotation * 2;
     legs.rotation = drunkardWalking.rotation / 2 * -1;
-    drunkardWalking.x = centerX - 40 + drunkardWalking.rotation;
+    drunkardWalking.x = centerX + drunkardWalking.rotation;
     if (drunkardWalking.rotation > .5 || drunkardWalking.rotation < -.5) {
       drunkardWalking.visible = false;
       falling.y = drunkardWalking.y;

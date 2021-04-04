@@ -19,8 +19,6 @@ function preload() {
   this.load.image('rightWall', 'rightWall.svg');
   this.load.image('buildings', 'buildings.svg');
   this.load.image('street', 'street.svg');
-  this.load.image('touchBar', 'touchBar.png');
-  this.load.image('touchBarButton', 'touchBarButton.png');
 
   this.load.spritesheet('legs', 'legs/legsStrip.png', {
     frameWidth: 250,

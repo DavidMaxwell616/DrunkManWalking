@@ -49,3 +49,5 @@ let drunkX = 0;
 let buttonDrag = false;
 var localStorageName = "drunkmanwalking";
 var gracePeriod = 100;
+var clickX=0;
+

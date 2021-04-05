@@ -80,6 +80,7 @@ function create() {
   });
 
   head = this.add.image(0, -130, 'head');
+  head.name = "head";
   head2 = this.add.image(0, -130, 'head');
   head3 = this.add.image(0, -130, 'head');
   leftArm = this.add.image(40, -70, 'leftArm');
@@ -94,9 +95,13 @@ function create() {
   rightArm2 = this.add.image(-25, -95, 'rightArm2').setOrigin(1, 0);  
   rightArm3 = this.add.image(-25, -95, 'rightArm').setOrigin(1, 0);
   body = this.add.image(-10, -70, 'body');
+  body.name = "body";
   legs = this.add.sprite(-10, 30, 'legs');
+  legs.name = "legs";
   body2 = this.add.image(-10, -70, 'body');
   bodyandlegs = this.add.image(-10, -10, 'body&legs');
+  bodyandlegs.name = "body&legs";
+
  
   this.anims.create({
     key: 'walk',
@@ -152,8 +157,9 @@ function create() {
   falling.visible = false;
   maxxdaddy = this.add.image(this.game.config.width * 0.9, this.game.config.height * 0.95, 'maxxdaddy');
   this.input.mouse.capture = true;
-
 }
+
+
 
 function onObjectClicked(pointer, gameObject) {
   if (gameObject.name == 'start')
@@ -183,7 +189,16 @@ function onObjectClicked(pointer, gameObject) {
     fluctuation = 1;
     score = 0;
     gracePeriod=100;
-  }
+    repositionBody();
+   }
+}
+
+function repositionBody(){
+  drunkardWalking.rotation=0;
+  rightArm.rotation=0;
+  head.rotation=0;
+  body.rotation=0;
+  legs.rotation=0;
 }
 
 function DrawShadows(game) {
@@ -300,8 +315,9 @@ function update() {
   }
   // let moveX = this.input.x+Lean;
   // stagger(moveX);
+  var x = this.input.activePointer.isDown?this.input.activePointer.downX:this.input.x;
   if(gracePeriod==0)
-    stagger(this.input.x);
+    stagger(x);
    else gracePeriod--;  
  }
 

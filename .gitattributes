@@ -1,0 +1,10 @@
+# Keep text files consistent across Windows, macOS, and Linux.
+* text=auto eol=lf
+
+# Never modify binary asset contents.
+*.gif binary
+*.mp3 binary
+*.pk binary
+*.png binary
+*.swf binary
+*.wav binary

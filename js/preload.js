@@ -1,13 +1,13 @@
-function preload() {
+export function preload() {
   showLoader(this);
-  this.load.animation('falling', '../assets/json/animations.json');
+  this.load.animation('falling', 'assets/json/animations.json');
 
   this.scale.pageAlignHorizontally = true;
   this.scale.pageAlignVertically = true;
   this.scale.refresh();
 
   // this.load.image('splash', '../assets/images/splash.png');
-  this.load.path = '../assets/images/';
+  this.load.path = 'assets/images/';
   this.load.image('maxxdaddy', 'maxxdaddy.gif');
   this.load.image('background', 'background.png');
   this.load.image('walls', 'walls.svg');
@@ -34,7 +34,7 @@ function preload() {
   this.load.image('drinking', 'bottle_drinking.png');
   this.load.image('startover', 'startover.png');
 
-  this.load.path = '../assets/images/falling/';
+  this.load.path = 'assets/images/falling/';
   for (let index = 1; index < 9; index++) {
     this.load.image('falling' + index, 'falling' + index + '.png');
   }

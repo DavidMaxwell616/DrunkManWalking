@@ -1,53 +1,14 @@
-let player;
-let playIntro = true;
-let score = 0;
-let scoreText;
-let buzzText;
-let startGame = false;
-let maxxdaddy;
-let curScore = 0;
-let bmd;
-let awning;
-let gameOverText;
-let highScore = 0;
+import { GameScene } from './GameScene.js';
 
-let street;
-let leftWall;
-let rightWall;
-let walls;
-let streetTween;
-let awningTween;
-let leftWallTween;
-let rightWallTween;
+const Phaser = globalThis.Phaser;
 
-let standing = true;
-let corrector = 0;
-let randomizer = 0;
-let factor = 0;
-let rotation = 0;
-let guyRotation = 0;
-let wobble = 3;
-let fluctuation = 1;
-let bodyandlegs;
-let head;
-let legs;
-let body;
-let bottle;
-let leftArm;
-let leftArm2;
-let leftArm3;
-let rightArm;
-let drunkardWalking;
-let drunkardStanding;
-let wobbleThreshold = 200;
-let falling;
-let walking = false;
-let timeToDrink;
-let drinkCount = 0;
-let drinking = false;
-let drunkX = 0;
-let buttonDrag = false;
-var localStorageName = "drunkmanwalking";
-var gracePeriod = 100;
-var clickX=0;
+const config = {
+  width: 1000,
+  height: 500,
+  type: Phaser.AUTO,
+  backgroundColor: '#001133',
+  parent: 'game',
+  scene: GameScene
+};
 
+new Phaser.Game(config);

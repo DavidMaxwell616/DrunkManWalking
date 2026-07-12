@@ -13,7 +13,7 @@ export function preload() {
   this.load.image('walls', 'walls.svg');
   this.load.image('leftWall', 'left wall.png');
   this.load.image('rightWall', 'right wall.png');
-  this.load.image('awning', 'awning.png');
+  this.load.image('awning', 'awning2.png');
   this.load.image('start', 'start.png');
   this.load.image('leftWall', 'leftWall.svg');
   this.load.image('rightWall', 'rightWall.svg');
@@ -26,6 +26,7 @@ export function preload() {
   });
   this.load.image('body&legs', 'body&legs.png');
   this.load.image('head', 'head.png');
+  this.load.image('smile', 'smile.png');
   this.load.image('body', 'torso.png');
   this.load.image('leftArm', 'leftArm.png');
   this.load.image('rightArm', 'rightArm.png');
@@ -38,6 +39,16 @@ export function preload() {
   for (let index = 1; index < 9; index++) {
     this.load.image('falling' + index, 'falling' + index + '.png');
   }
+
+  this.load.path = '';
+  this.load.audio('crash', 'assets/sounds/crash.wav');
+  this.load.audio('drinkingSound', 'assets/sounds/drinking.mp3');
+  this.load.audio('snore', 'assets/sounds/snore.wav');
+  this.load.audio('talk1', 'assets/sounds/lagreco talk1.mp3');
+  this.load.audio('talk2', 'assets/sounds/lagreco talk2.mp3');
+  this.load.audio('talk3', 'assets/sounds/lagreco talk3.mp3');
+  this.load.audio('beforeStart', 'assets/sounds/lagreco song 1.mp3');
+  this.load.audio('betweenRounds', 'assets/sounds/lagreco song 3.wav');
 }
 
 function showLoader(game) {
@@ -45,9 +56,9 @@ function showLoader(game) {
   var progressBox = game.add.graphics();
   progressBox.fillStyle(0x222222, 0.8);
   progressBox.fillRect(340, 270, 320, 50);
-  game.load.on('progress', function (value) {});
+  game.load.on('progress', function (value) { });
 
-  game.load.on('fileprogress', function (file) {});
+  game.load.on('fileprogress', function (file) { });
 
   game.load.on('complete', function () {
     progressBar.destroy();

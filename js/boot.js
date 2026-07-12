@@ -1,4 +1,5 @@
 import { GameScene } from './GameScene.js';
+import { SplashScene } from './SplashScene.js';
 
 const Phaser = globalThis.Phaser;
 
@@ -8,7 +9,7 @@ const config = {
   type: Phaser.AUTO,
   backgroundColor: '#001133',
   parent: 'game',
-  scene: GameScene
+  scene: [SplashScene, GameScene]
 };
 
 new Phaser.Game(config);

@@ -23,6 +23,10 @@ export class GameScene extends Phaser.Scene {
     this.drunkX = 0;
     this.gracePeriod = 100;
     this.localStorageName = 'drunkmanwalking';
+    this.nextTalkAt = 0;
+    this.finishRevealScore = 130;
+    this.finishScore = 150;
+    this.hasWon = false;
   }
 
   preload() {
@@ -82,22 +86,70 @@ export class GameScene extends Phaser.Scene {
 
     this.DrawShadows(this);
 
-    this.awning = this.add.sprite(this.centerX + 180, this.centerY + 40, 'awning').setScale(.3, .3);
-    this.awningTween = this.tweens.add({
-      targets: this.awning,
-      scale: 0,
-      x: this.centerX - 50,
-      y: this.centerY + 55,
-      ease: 'Quad.easeOut',
-      repeat: 0,
-      yoyo: false,
-      paused: true,
-      duration: 20000,
-    });
+    const drawDoorTrapezoid = (points, color, alpha = 1) => {
+      const shape = this.add.graphics();
+      shape.fillStyle(color, alpha);
+      shape.beginPath();
+      shape.moveTo(points[0][0], points[0][1]);
+      points.slice(1).forEach(([x, y]) => shape.lineTo(x, y));
+      shape.closePath();
+      shape.fillPath();
+      return shape;
+    };
 
-    this.head = this.add.image(0, -130, 'head');
+    const doorwayGlow = drawDoorTrapezoid(
+      [[-45, -48], [43, -60], [43, 60], [-45, 51]],
+      0xff6a00,
+      0.22
+    );
+    const pavementGlow = drawDoorTrapezoid(
+      [[-46, 46], [43, 58], [43, 112], [-116, 70]],
+      0xff6a00,
+      0.16
+    );
+    const pavementLight = drawDoorTrapezoid(
+      [[-28, 51], [29, 57], [29, 96], [-87, 64]],
+      0xffa12b,
+      0.22
+    );
+    const doorwayFrame = drawDoorTrapezoid(
+      [[-34, -41], [32, -51], [32, 60], [-34, 52]],
+      0x111111
+    );
+    const doorwayLight = drawDoorTrapezoid(
+      [[-25, -35], [23, -43], [23, 55], [-25, 49]],
+      0xff7b19
+    );
+    const doorwayCore = drawDoorTrapezoid(
+      [[-17, -30], [15, -36], [15, 50], [-17, 45]],
+      0xffc04d,
+      0.8
+    );
+    const homeSign = this.add.text(-2, -68, 'HOME', {
+      fontFamily: 'Arial, sans-serif',
+      fontSize: '15px',
+      fontStyle: 'bold italic',
+      color: '#ffb13b',
+      stroke: '#000000',
+      strokeThickness: 3
+    }).setOrigin(0.5).setRotation(-0.2).setScale(0.82, 1);
+
+    this.finishDoor = this.add.container(875, 293, [pavementGlow, pavementLight, doorwayGlow, doorwayFrame, doorwayLight, doorwayCore, homeSign]);
+    this.finishDoor.setScale(1.35);
+    this.finishDoor.visible = false;
+
+    this.awning = this.add.sprite(this.centerX + 180, this.centerY + 40, 'awning').setScale(.3, .3);
+    this.createAwningTween(true);
+
+    const walkingHeadImage = this.add.image(0, 0, 'head');
+    this.smileMouth = this.add.image(-5, 20, 'smile');
+    this.talkingMouth = this.add.ellipse(-5, 23, 14, 7, 0x001133);
+    this.talkingMouth.visible = false;
+    this.head = this.add.container(0, -130, [walkingHeadImage, this.smileMouth, this.talkingMouth]);
     this.head.name = "head";
-    this.head2 = this.add.image(0, -130, 'head');
+    const standingHeadImage = this.add.image(0, 0, 'head');
+    this.standingSmileMouth = this.add.image(-5, 20, 'smile');
+    this.head2 = this.add.container(0, -130, [standingHeadImage, this.standingSmileMouth]);
     this.head3 = this.add.image(0, -130, 'head');
     this.leftArm = this.add.image(40, -70, 'leftArm');
     this.leftArm2 = this.add.image(40, -70, 'leftArm');
@@ -172,28 +224,47 @@ export class GameScene extends Phaser.Scene {
     this.falling = this.add.sprite(0, 0, 'falling1')
     this.falling.visible = false;
     this.maxxdaddy = this.add.image(this.game.config.width * 0.9, this.game.config.height * 0.95, 'maxxdaddy');
+
+    this.crashSound = this.sound.add('crash', { volume: 0.8 });
+    this.drinkingSound = this.sound.add('drinkingSound', { volume: 0.8 });
+    this.snoreSound = this.sound.add('snore', { loop: true, volume: 0.65 });
+    this.beforeStartMusic = this.sound.add('beforeStart', { loop: true, volume: 0.55 });
+    this.betweenRoundsMusic = this.sound.add('betweenRounds', { loop: true, volume: 0.55 });
+    this.talkSounds = [
+      this.sound.add('talk1', { volume: 0.8 }),
+      this.sound.add('talk2', { volume: 0.8 }),
+      this.sound.add('talk3', { volume: 0.8 })
+    ];
+    this.beforeStartMusic.play();
+
     this.input.mouse.capture = true;
   }
 
 
 
   onObjectClicked(pointer, gameObject) {
-    if (gameObject.name == 'start')
+    if (gameObject.name == 'start') {
+      this.beforeStartMusic.stop();
+      this.betweenRoundsMusic.stop();
       this.walking = true;
-    else if (gameObject.name == 'startover') {
+      this.scheduleNextTalk();
+    } else if (gameObject.name == 'startover') {
+      this.stopCharacterSounds();
       this.walking = true;
+      this.scheduleNextTalk();
       this.drunkardStanding.visible = false;
       this.drunkardWalking.visible = true;
       this.streetTween.resume();
       this.leftWallTween.resume();
       this.rightWallTween.resume();
-      this.awning.setPosition(this.centerX + 180, this.centerY + 40).setScale(.3, .3);
-      this.awningTween.restart();
-      this.awningTween.play();
+      this.createAwningTween(false);
       this.legs.anims.play('walk', true);
       this.falling.visible = false;
       this.gameOverText.visible = false;
       this.wobbleThreshold = 200;
+      this.hasWon = false;
+      this.finishDoor.visible = false;
+      this.finishDoor.setPosition(1000, 293).setScale(1.35);
       this.startover.visible = false;
       this.standing = true;
       this.corrector = 0;
@@ -215,6 +286,128 @@ export class GameScene extends Phaser.Scene {
     this.head.rotation = 0;
     this.body.rotation = 0;
     this.legs.rotation = 0;
+  }
+
+  createAwningTween(paused) {
+    if (this.awningTween) {
+      this.awningTween.stop();
+    }
+
+    this.awning.setPosition(this.centerX + 180, this.centerY + 40).setScale(0.3);
+    this.awningTween = this.tweens.add({
+      targets: this.awning,
+      scale: 0,
+      x: this.centerX - 50,
+      y: this.centerY + 55,
+      ease: 'Quad.easeOut',
+      repeat: 0,
+      yoyo: false,
+      paused,
+      duration: 20000
+    });
+  }
+
+  scheduleNextTalk() {
+    this.nextTalkAt = this.time.now + Phaser.Math.Between(6000, 14000);
+  }
+
+  playRandomTalk() {
+    const talkIsPlaying = this.talkSounds.some((sound) => sound.isPlaying);
+
+    if (this.time.now < this.nextTalkAt || talkIsPlaying || this.drinking) {
+      return;
+    }
+
+    Phaser.Utils.Array.GetRandom(this.talkSounds).play();
+    this.scheduleNextTalk();
+  }
+
+  updateTalkingMouth() {
+    const talkIsPlaying = this.talkSounds.some((sound) => sound.isPlaying);
+    this.talkingMouth.visible = talkIsPlaying;
+    this.smileMouth.visible = !talkIsPlaying;
+
+    if (talkIsPlaying) {
+      const openAmount = 0.45 + Math.abs(Math.sin(this.time.now / 85)) * 0.8;
+      this.talkingMouth.setScale(1, openAmount);
+    }
+  }
+
+  stopCharacterSounds() {
+    this.drinkingSound.stop();
+    this.snoreSound.stop();
+    this.beforeStartMusic.stop();
+    this.betweenRoundsMusic.stop();
+    this.talkSounds.forEach((sound) => sound.stop());
+    this.talkingMouth.visible = false;
+    this.smileMouth.visible = true;
+  }
+
+  onFallAnimationComplete() {
+    if (!this.walking && !this.snoreSound.isPlaying) {
+      this.snoreSound.play();
+    }
+  }
+
+  updateFinishLine() {
+    if (this.score < this.finishRevealScore) {
+      return;
+    }
+
+    const progress = Phaser.Math.Clamp(
+      (this.score - this.finishRevealScore) / (this.finishScore - this.finishRevealScore),
+      0,
+      1
+    );
+
+    const scale = Phaser.Math.Linear(1.35, 0.08, progress);
+    const finishX = this.centerX - 43 * scale;
+    const x = Phaser.Math.Linear(875, finishX, progress);
+    const buildingBaseY = Phaser.Math.Linear(374, 320, progress);
+
+    this.finishDoor.visible = true;
+    this.finishDoor.setPosition(x, buildingBaseY - 60 * scale);
+    this.finishDoor.setScale(scale);
+  }
+
+  hasReachedFinishLine() {
+    if (!this.finishDoor.visible) {
+      return false;
+    }
+
+    const doorwayRightEdge = this.finishDoor.x + 43 * this.finishDoor.scaleX;
+    const playerFeetX = this.drunkardWalking.x;
+    return doorwayRightEdge <= playerFeetX + 2;
+  }
+
+  winGame() {
+    if (this.hasWon) {
+      return;
+    }
+
+    this.hasWon = true;
+    this.walking = false;
+    this.standing = false;
+    this.score = this.finishScore;
+    this.updateFinishLine();
+    this.stopCharacterSounds();
+    this.betweenRoundsMusic.play();
+    this.streetTween.pause();
+    this.awningTween.pause();
+    this.leftWallTween.pause();
+    this.rightWallTween.pause();
+    this.legs.anims.stop();
+    this.drunkardWalking.rotation = 0;
+    this.drunkardWalking.x = this.finishDoor.x + 43 * this.finishDoor.scaleX;
+
+    if (this.score > this.highScore) {
+      this.highScore = this.score;
+      localStorage.setItem(this.localStorageName, this.highScore);
+    }
+
+    this.gameOverText.setText('YOU MADE IT HOME!\nScore: ' + this.score + '\nHigh Score: ' + this.highScore);
+    this.gameOverText.visible = true;
+    this.startover.visible = true;
   }
 
   DrawShadows(game) {
@@ -320,6 +513,10 @@ export class GameScene extends Phaser.Scene {
   update() {
     if (!this.walking)
       return;
+
+    this.playRandomTalk();
+    this.updateTalkingMouth();
+    this.updateFinishLine();
     this.drunkardStanding.visible = false;
     this.drunkardWalking.visible = true;
     if (this.streetTween.paused) {
@@ -352,6 +549,11 @@ export class GameScene extends Phaser.Scene {
       }
 
       this.score += .1;
+      this.updateFinishLine();
+      if (this.hasReachedFinishLine()) {
+        this.winGame();
+        return;
+      }
       if (Math.floor(this.score) % 20 == 0)
         this.wobbleThreshold += 1;
       if (this.corrector < this.randomizer)
@@ -360,11 +562,13 @@ export class GameScene extends Phaser.Scene {
         this.corrector -= .1;
       this.factor = (mouseX - centerX) / 40 + this.rotation / this.wobble;
 
-      if (this.timeToDrink > 990 && !this.drinking) {
+      const talkIsPlaying = this.talkSounds.some((sound) => sound.isPlaying);
+      if (this.timeToDrink > 990 && !this.drinking && !talkIsPlaying) {
         this.drunkardWalking.getByName('drinking').setVisible(true);
         this.drunkardWalking.getByName('leftArm').setVisible(false);
         this.drunkardWalking.getByName('bottle').setVisible(false);
         this.drinking = true;
+        this.drinkingSound.play();
       }
       if (this.drinking) {
         this.drinkCount++;
@@ -373,6 +577,7 @@ export class GameScene extends Phaser.Scene {
           this.drunkardWalking.getByName('leftArm').setVisible(true);
           this.drunkardWalking.getByName('bottle').setVisible(true);
           this.drinking = false;
+          this.drinkingSound.stop();
           if (this.wobbleThreshold > 0)
             this.wobbleThreshold -= 25;
           this.drinkCount = 0;
@@ -398,6 +603,10 @@ export class GameScene extends Phaser.Scene {
           this.falling.x = this.drunkardWalking.x - 50;
         }
         this.falling.visible = true;
+        this.stopCharacterSounds();
+        this.crashSound.play();
+        this.betweenRoundsMusic.play();
+        this.falling.once('animationcomplete', this.onFallAnimationComplete, this);
         this.falling.play('falling');
         this.streetTween.pause();
         this.awningTween.pause();

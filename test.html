@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Finish Door Test</title>
+  <style>
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: #001133;
+    }
+
+    #game {
+      display: flex;
+      justify-content: center;
+      padding-top: 24px;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.18.1/dist/phaser.min.js"></script>
+</head>
+
+<body>
+  <div id="game"></div>
+
+  <script>
+    class FinishDoorTestScene extends Phaser.Scene {
+      create() {
+        const width = this.game.config.width;
+        const height = this.game.config.height;
+
+        this.add.rectangle(width / 2, height / 2, width, height, 0x001133);
+
+        const building = this.add.graphics();
+        building.fillStyle(0x042c55);
+        building.beginPath();
+        building.moveTo(430, 90);
+        building.lineTo(width, 30);
+        building.lineTo(width, 374);
+        building.lineTo(430, 300);
+        building.closePath();
+        building.fillPath();
+
+        const pavement = this.add.graphics();
+        pavement.fillStyle(0x063c5c);
+        pavement.beginPath();
+        pavement.moveTo(430, 300);
+        pavement.lineTo(width, 374);
+        pavement.lineTo(width, height);
+        pavement.lineTo(0, height);
+        pavement.closePath();
+        pavement.fillPath();
+
+        const drawDoorTrapezoid = (points, color, alpha = 1) => {
+          const shape = this.add.graphics();
+          shape.fillStyle(color, alpha);
+          shape.beginPath();
+          shape.moveTo(points[0][0], points[0][1]);
+          points.slice(1).forEach(([x, y]) => shape.lineTo(x, y));
+          shape.closePath();
+          shape.fillPath();
+          return shape;
+        };
+
+        const doorwayGlow = drawDoorTrapezoid(
+          [[-45, -48], [43, -60], [43, 60], [-45, 51]],
+          0xff6a00,
+          0.22
+        );
+        const pavementGlow = drawDoorTrapezoid(
+          [[-46, 46], [43, 58], [43, 112], [-116, 70]],
+          0xff6a00,
+          0.16
+        );
+        const pavementLight = drawDoorTrapezoid(
+          [[-28, 51], [29, 57], [29, 96], [-87, 64]],
+          0xffa12b,
+          0.22
+        );
+        const doorwayFrame = drawDoorTrapezoid(
+          [[-34, -41], [32, -51], [32, 60], [-34, 52]],
+          0x111111
+        );
+        const doorwayLight = drawDoorTrapezoid(
+          [[-25, -35], [23, -43], [23, 55], [-25, 49]],
+          0xff7b19
+        );
+        const doorwayCore = drawDoorTrapezoid(
+          [[-17, -30], [15, -36], [15, 50], [-17, 45]],
+          0xffc04d,
+          0.8
+        );
+        const homeSign = this.add.text(-2, -68, 'HOME', {
+          fontFamily: 'Arial, sans-serif',
+          fontSize: '15px',
+          fontStyle: 'bold italic',
+          color: '#ffb13b',
+          stroke: '#000000',
+          strokeThickness: 3
+        }).setOrigin(0.5).setRotation(-0.2).setScale(0.82, 1);
+
+        this.finishDoor = this.add.container(760, 290, [
+          pavementGlow,
+          pavementLight,
+          doorwayGlow,
+          doorwayFrame,
+          doorwayLight,
+          doorwayCore,
+          homeSign
+        ]);
+        this.finishDoor.setScale(1.35);
+
+        this.add.text(20, 20, 'finishDoor graphics test', {
+          fontFamily: 'Arial, sans-serif',
+          fontSize: '22px',
+          color: '#ffffff'
+        });
+      }
+    }
+
+    new Phaser.Game({
+      type: Phaser.AUTO,
+      width: 1000,
+      height: 500,
+      backgroundColor: '#001133',
+      parent: 'game',
+      scene: FinishDoorTestScene
+    });
+  </script>
+</body>
+
+</html>

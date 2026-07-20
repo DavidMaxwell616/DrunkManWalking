@@ -7,6 +7,7 @@ export class GameScene extends Phaser.Scene {
     super({ key: 'GameScene' });
 
     this.score = 0;
+    this.distance = 0;
     this.highScore = 0;
     this.standing = true;
     this.corrector = 0;
@@ -20,13 +21,15 @@ export class GameScene extends Phaser.Scene {
     this.walking = false;
     this.drinkCount = 0;
     this.drinking = false;
+    this.buzz = 0;
+    this.buzzIncrement = .05;
     this.drunkX = 0;
     this.gracePeriod = 100;
     this.localStorageName = 'drunkmanwalking';
     this.nextTalkAt = 0;
-    this.finishRevealScore = 130;
-    this.finishScore = 150;
+    this.finishDistance = 150;
     this.hasWon = false;
+    this.finishApproachTween = null;
   }
 
   preload() {
@@ -180,6 +183,24 @@ export class GameScene extends Phaser.Scene {
       frameRate: 10,
       repeat: -1
     });
+    this.anims.create({
+      key: 'finishTurnRight',
+      frames: this.anims.generateFrameNumbers('finishWalk', {
+        start: 0,
+        end: 3
+      }),
+      frameRate: 8,
+      repeat: 0
+    });
+    this.anims.create({
+      key: 'finishWalkRight',
+      frames: this.anims.generateFrameNumbers('finishWalk', {
+        start: 4,
+        end: 11
+      }),
+      frameRate: 8,
+      repeat: -1
+    });
     this.start = this.add.image(-120, -110, 'start');
     this.start.name = 'start';
     this.start.setInteractive();
@@ -192,20 +213,37 @@ export class GameScene extends Phaser.Scene {
     this.drunkardWalking.visible = false;
     this.drunkardStanding = this.add.container(this.drunkX, this.centerY + 100, [this.bodyandlegs, this.head2, this.leftArm2, this.rightArm2, this.start, this.bottle2]);
     this.drunkardStanding.setSize(64, 64);
+    this.finishWalk = this.add.sprite(this.drunkX, this.centerY + 100, 'finishWalk', 0).setScale(0.5);
+    this.finishWalk.visible = false;
     // drunkardStanding.visible = false;
     // awning.visible = false;
     this.startover = this.add.image(800, 350, 'startover');
     this.startover.visible = false;
     this.startover.name = 'startover';
     this.startover.setInteractive();
+    this.nextRoundLabel = this.add.text(797, 335, 'NEXT\nROUND', {
+      fontFamily: 'Arial, sans-serif',
+      fontSize: '24px',
+      fontStyle: 'bold',
+      color: '#ffffff',
+      align: 'center',
+      backgroundColor: '#4a86ad',
+    }).setOrigin(0.5);
+    this.nextRoundLabel.visible = false;
 
-    this.scoreText = this.add.text(16, 16, 'Score: 0', {
+    this.distanceText = this.add.text(16, 6, 'Distance: 0', {
       fontFamily: 'arial',
       fontSize: '32px',
       fontStyle: 'bold',
       fill: '#ff4500'
     });
-    this.buzzText = this.add.text(16, 46, 'Buzz: 0', {
+    this.buzzText = this.add.text(16, 36, 'Buzz: 0', {
+      fontFamily: 'arial',
+      fontSize: '32px',
+      fontStyle: 'bold',
+      fill: '#ff4500'
+    });
+    this.scoreText = this.add.text(16, 66, 'Score: 0', {
       fontFamily: 'arial',
       fontSize: '32px',
       fontStyle: 'bold',
@@ -248,7 +286,16 @@ export class GameScene extends Phaser.Scene {
       this.betweenRoundsMusic.stop();
       this.walking = true;
       this.scheduleNextTalk();
-    } else if (gameObject.name == 'startover') {
+    }
+    else if (gameObject.name == 'startover') {
+      if (this.finishApproachTween) {
+        this.finishApproachTween.stop();
+        this.finishApproachTween = null;
+      }
+      this.finishWalk.anims.stop();
+      this.finishWalk.visible = false;
+      this.finishDoor.visible = false;
+      this.nextRoundLabel.visible = false;
       this.stopCharacterSounds();
       this.walking = true;
       this.scheduleNextTalk();
@@ -263,8 +310,6 @@ export class GameScene extends Phaser.Scene {
       this.gameOverText.visible = false;
       this.wobbleThreshold = 200;
       this.hasWon = false;
-      this.finishDoor.visible = false;
-      this.finishDoor.setPosition(1000, 293).setScale(1.35);
       this.startover.visible = false;
       this.standing = true;
       this.corrector = 0;
@@ -275,6 +320,14 @@ export class GameScene extends Phaser.Scene {
       this.wobble = 3;
       this.fluctuation = 1;
       this.score = 0;
+      this.buzz = 0;
+      this.distance = 0;
+      this.drinking = false;
+      this.drinkCount = 0;
+      this.drunkardWalking.getByName('drinking').setVisible(false);
+      this.drunkardWalking.getByName('leftArm').setVisible(true);
+      this.drunkardWalking.getByName('bottle').setVisible(true);
+      this.buzzText.setText('buzz: 0%');
       this.gracePeriod = 100;
       this.repositionBody();
     }
@@ -349,47 +402,20 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  updateFinishLine() {
-    if (this.score < this.finishRevealScore) {
-      return;
-    }
-
-    const progress = Phaser.Math.Clamp(
-      (this.score - this.finishRevealScore) / (this.finishScore - this.finishRevealScore),
-      0,
-      1
-    );
-
-    const scale = Phaser.Math.Linear(1.35, 0.08, progress);
-    const finishX = this.centerX - 43 * scale;
-    const x = Phaser.Math.Linear(875, finishX, progress);
-    const buildingBaseY = Phaser.Math.Linear(374, 320, progress);
-
-    this.finishDoor.visible = true;
-    this.finishDoor.setPosition(x, buildingBaseY - 60 * scale);
-    this.finishDoor.setScale(scale);
-  }
-
   hasReachedFinishLine() {
-    if (!this.finishDoor.visible) {
-      return false;
-    }
-
-    const doorwayRightEdge = this.finishDoor.x + 43 * this.finishDoor.scaleX;
-    const playerFeetX = this.drunkardWalking.x;
-    return doorwayRightEdge <= playerFeetX + 2;
+    return this.distance >= this.finishDistance;
   }
 
   winGame() {
     if (this.hasWon) {
       return;
     }
-
+    this.finishDoor.visible = true;
     this.hasWon = true;
+    this.finishDistance += 50;
+    this.buzzIncrement += .01;
     this.walking = false;
     this.standing = false;
-    this.score = this.finishScore;
-    this.updateFinishLine();
     this.stopCharacterSounds();
     this.betweenRoundsMusic.play();
     this.streetTween.pause();
@@ -398,7 +424,11 @@ export class GameScene extends Phaser.Scene {
     this.rightWallTween.pause();
     this.legs.anims.stop();
     this.drunkardWalking.rotation = 0;
-    this.drunkardWalking.x = this.finishDoor.x + 43 * this.finishDoor.scaleX;
+    this.drunkardWalking.visible = false;
+    this.drunkardStanding.visible = false;
+    this.startover.visible = false;
+    this.nextRoundLabel.visible = false;
+    this.gameOverText.visible = false;
 
     if (this.score > this.highScore) {
       this.highScore = this.score;
@@ -406,8 +436,35 @@ export class GameScene extends Phaser.Scene {
     }
 
     this.gameOverText.setText('YOU MADE IT HOME!\nScore: ' + this.score + '\nHigh Score: ' + this.highScore);
-    this.gameOverText.visible = true;
-    this.startover.visible = true;
+
+    this.finishWalk
+      .setPosition(this.drunkardWalking.x, this.drunkardWalking.y)
+      .setScale(0.5)
+      .setFrame(0)
+      .setVisible(true);
+    this.finishWalk.once('animationcomplete-finishTurnRight', () => {
+      if (this.finishWalk.visible) {
+        this.finishWalk.play('finishWalkRight');
+      }
+    });
+    this.finishWalk.play('finishTurnRight');
+
+    this.finishApproachTween = this.tweens.add({
+      targets: this.finishWalk,
+      x: this.finishDoor.x - 20,
+      y: this.finishDoor.y + 7,
+      scale: 0.22,
+      duration: 2600,
+      ease: 'Quad.easeIn',
+      onComplete: () => {
+        this.finishWalk.anims.stop();
+        this.finishWalk.visible = false;
+        this.finishApproachTween = null;
+        this.gameOverText.visible = true;
+        this.startover.visible = true;
+        this.nextRoundLabel.visible = true;
+      }
+    });
   }
 
   DrawShadows(game) {
@@ -513,10 +570,8 @@ export class GameScene extends Phaser.Scene {
   update() {
     if (!this.walking)
       return;
-
     this.playRandomTalk();
     this.updateTalkingMouth();
-    this.updateFinishLine();
     this.drunkardStanding.visible = false;
     this.drunkardWalking.visible = true;
     if (this.streetTween.paused) {
@@ -526,12 +581,16 @@ export class GameScene extends Phaser.Scene {
       this.rightWallTween.resume();
       this.legs.anims.play('walk', true);
     }
-    // let moveX = this.input.x+Lean;
-    // stagger(moveX);
-    var x = this.input.activePointer.isDown ? this.input.activePointer.downX : this.input.x;
+    if (this.hasReachedFinishLine()) {
+      this.winGame();
+      return;
+    }
+    const x = this.input.activePointer.x;
     if (this.gracePeriod == 0)
       this.stagger(x);
     else this.gracePeriod--;
+
+
   }
 
 
@@ -548,13 +607,9 @@ export class GameScene extends Phaser.Scene {
         this.fluctuation = 0.25;
       }
 
-      this.score += .1;
-      this.updateFinishLine();
-      if (this.hasReachedFinishLine()) {
-        this.winGame();
-        return;
-      }
-      if (Math.floor(this.score) % 20 == 0)
+      this.distance += .05;
+
+      if (Math.floor(this.distance) % 20 == 0)
         this.wobbleThreshold += 1;
       if (this.corrector < this.randomizer)
         this.corrector += .1;
@@ -572,22 +627,23 @@ export class GameScene extends Phaser.Scene {
       }
       if (this.drinking) {
         this.drinkCount++;
-        if (this.drinkCount > 100) {
+        this.buzz = Phaser.Math.Clamp(this.buzz + this.buzzIncrement, 0, 100);
+        if (this.drinkCount >= 100) {
           this.drunkardWalking.getByName('drinking').setVisible(false);
           this.drunkardWalking.getByName('leftArm').setVisible(true);
           this.drunkardWalking.getByName('bottle').setVisible(true);
           this.drinking = false;
           this.drinkingSound.stop();
-          if (this.wobbleThreshold > 0)
-            this.wobbleThreshold -= 25;
+          this.wobbleThreshold = Math.max(25, this.wobbleThreshold - 25);
           this.drinkCount = 0;
         }
       }
       this.rotation += (this.rotation + this.factor + this.corrector) / this.wobbleThreshold; // * fluctuation;
       this.drunkardWalking.rotation = this.rotation;
-      this.buzz = (200 - this.wobbleThreshold) / 200 * 100;
-      this.scoreText.setText('score: ' + Math.floor(this.score));
+      this.distanceText.setText('distance: ' + Math.floor(this.distance) + ' steps');
       this.buzzText.setText('buzz: ' + Math.floor(this.buzz) + '%');
+      this.score = Math.floor(this.distance * this.buzz);
+      this.scoreText.setText('score: ' + Math.floor(this.score));
       this.head.rotation = this.drunkardWalking.rotation * -1;
       this.rightArm.rotation = this.drunkardWalking.rotation * 2;
       this.legs.rotation = this.drunkardWalking.rotation / 2 * -1;
@@ -618,6 +674,7 @@ export class GameScene extends Phaser.Scene {
         if (this.score > this.highScore)
           this.highScore = this.score;
         this.gameOverText.setText('GAME OVER\nYour Score: ' + this.score + '\nHigh Score: ' + this.highScore);
+        this.nextRoundLabel.visible = false;
         this.startover.visible = true;
         this.rotation = 0;
         this.standing = false;

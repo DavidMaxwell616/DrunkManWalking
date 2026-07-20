@@ -24,6 +24,10 @@ export function preload() {
     frameWidth: 250,
     frameHeight: 150
   });
+  this.load.spritesheet('finishWalk', 'drunkard-turn-right-walk-bottle.png', {
+    frameWidth: 320,
+    frameHeight: 420
+  });
   this.load.image('body&legs', 'body&legs.png');
   this.load.image('head', 'head.png');
   this.load.image('smile', 'smile.png');

@@ -18,7 +18,7 @@ export class SplashScene extends Phaser.Scene {
     this.add.rectangle(width / 2, 78, width, 156, 0x001133, 0.62);
 
     this.add.text(width / 2, 18, 'Fubar Presents...', {
-      fontFamily: 'Chewy, Cooper Black, serif',
+      fontFamily: 'Fontdiner Swanky, Cooper Black, serif',
       fontSize: '22px',
       color: '#ffffff',
       stroke: '#000000',
@@ -27,7 +27,7 @@ export class SplashScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     this.add.text(width / 2, 78, 'DRUNK MAN WALKING', {
-      fontFamily: 'Chewy, Cooper Black, serif',
+      fontFamily: 'Fontdiner Swanky, Cooper Black, serif',
       fontSize: '62px',
       color: '#ff6a00',
       stroke: '#000000',

@@ -7,6 +7,7 @@ export class GameScene extends Phaser.Scene {
     super({ key: 'GameScene' });
 
     this.score = 0;
+    this.roundStartingScore = 0;
     this.distance = 0;
     this.highScore = 0;
     this.standing = true;
@@ -288,6 +289,7 @@ export class GameScene extends Phaser.Scene {
       this.scheduleNextTalk();
     }
     else if (gameObject.name == 'startover') {
+      const isNextRound = this.hasWon;
       if (this.finishApproachTween) {
         this.finishApproachTween.stop();
         this.finishApproachTween = null;
@@ -319,7 +321,12 @@ export class GameScene extends Phaser.Scene {
       this.guyRotation = 0;
       this.wobble = 3;
       this.fluctuation = 1;
-      this.score = 0;
+      if (isNextRound) {
+        this.roundStartingScore = this.score;
+      } else {
+        this.score = 0;
+        this.roundStartingScore = 0;
+      }
       this.buzz = 0;
       this.distance = 0;
       this.drinking = false;
@@ -328,6 +335,7 @@ export class GameScene extends Phaser.Scene {
       this.drunkardWalking.getByName('leftArm').setVisible(true);
       this.drunkardWalking.getByName('bottle').setVisible(true);
       this.buzzText.setText('buzz: 0%');
+      this.scoreText.setText('score: ' + this.score);
       this.gracePeriod = 100;
       this.repositionBody();
     }
@@ -642,7 +650,7 @@ export class GameScene extends Phaser.Scene {
       this.drunkardWalking.rotation = this.rotation;
       this.distanceText.setText('distance: ' + Math.floor(this.distance) + ' steps');
       this.buzzText.setText('buzz: ' + Math.floor(this.buzz) + '%');
-      this.score = Math.floor(this.distance * this.buzz);
+      this.score = this.roundStartingScore + Math.floor(this.distance * this.buzz);
       this.scoreText.setText('score: ' + Math.floor(this.score));
       this.head.rotation = this.drunkardWalking.rotation * -1;
       this.rightArm.rotation = this.drunkardWalking.rotation * 2;
